@@ -63,7 +63,7 @@ namespace NipClip.Classes.Clipboard
 
             try
             {
-                if (entries.Count > 0 && entries.Last().Content != System.Windows.Clipboard.GetText())
+                if (entries.Count > 0 && entries.First().Content != System.Windows.Clipboard.GetText())
                 {
                     StringClipboardEntry stringClipboardEntry = new StringClipboardEntry();
                     stringClipboardEntry.Content = System.Windows.Clipboard.GetText();
