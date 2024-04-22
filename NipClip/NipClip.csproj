@@ -5,6 +5,12 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <StartupObject>NipClip.App</StartupObject>
+    <ApplicationIcon>logo-black.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="logo-black.ico" />
+  </ItemGroup>
 
 </Project>

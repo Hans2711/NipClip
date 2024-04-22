@@ -105,7 +105,6 @@ namespace NipClip.Classes.Keyboard
                 index = 9;
             }
 
-
             string content = System.Windows.Clipboard.GetText();
             StringClipboardEntry entry = new StringClipboardEntry();
             entry.Content = content;    
@@ -117,17 +116,6 @@ namespace NipClip.Classes.Keyboard
                     mainWindow.clipboardReader.clipboardStorage.CheckPossibleNewEntry(entry);
                 }
             }
-
-
-
-            //if (this.clipboardReader.clipboardStorage.entries.Count > index)
-            //{
-            //    ClipboardStorage.ignoreElement = this.clipboardReader.clipboardStorage.entries[index];
-
-            //    this.clipboardReader.clipboardStorage.entries[index].pasteToClipboard();
-            //}
         }
-
-
     }
 }
