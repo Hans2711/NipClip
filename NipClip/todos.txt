@@ -4,6 +4,8 @@ Keyboard Hook (Shortcuts)
 
 Sorter
 
+Image support
+
 String Conversion
 Inner delimiter
 Custom Templates

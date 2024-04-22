@@ -64,8 +64,8 @@ namespace NipClip.Classes.Clipboard
                     entry.Content = System.Windows.Clipboard.GetText();
 
                     this.clipboardStorage.CheckPossibleNewEntry(entry);
-                    Thread.Sleep(980);
                 } catch (Exception ex) { }
+                Thread.Sleep(980);
             }
         }
 

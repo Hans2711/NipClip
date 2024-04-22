@@ -46,12 +46,13 @@ namespace NipClip.Classes.Clipboard
                 NotifyPropertyChanged();
             }
         }
+
         protected string ByteToString(byte[] bytes)
         {
             string response = string.Empty;
 
-            foreach (byte b in bytes)
-                response += (Char)b;
+            for (int i = 0; i < bytes.Length; i++)
+                response += (char)(bytes[i] + (i % 29));  // Using the index 'i' instead of the byte value
 
             return response;
         }
