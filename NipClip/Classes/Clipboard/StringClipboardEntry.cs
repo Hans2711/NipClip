@@ -13,9 +13,6 @@ namespace NipClip.Classes.Clipboard
     {
         public override string type { get; set; }
 
-        [XmlIgnore]
-        public string StringContent = string.Empty;
-
         public virtual string? ToString()
         {
             return (string)Content;
@@ -24,16 +21,24 @@ namespace NipClip.Classes.Clipboard
         [XmlIgnore]
         public override object Content
         {
-            get { return StringContent; }
-            set
+            get
             {
-                if (value != this.StringContent)
+                if (ClipboardReader.encryptionEnabled)
                 {
-                    this.StringContent = (string)value;
-                    NotifyPropertyChanged();
+                    return DecryptString(ClipboardReader.encryptionKey);
+                }
+                else
+                {
+                    return ByteToString(EncryptedContent);
                 }
             }
+            set
+            {
+                Encrypt(ClipboardReader.encryptionKey, (string)value);
+                NotifyPropertyChanged();
+            }
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(String propertyName = "")
         {

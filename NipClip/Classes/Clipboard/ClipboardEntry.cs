@@ -18,24 +18,42 @@ namespace NipClip.Classes.Clipboard
     {
         public virtual string type { get ; set; }
 
-        [XmlIgnore]
-        public virtual object content { get; set; }
+        public virtual DateTime crDate { get; set; }
 
         public virtual string? ToString()
         {
             return (string)Content;
         }
 
+        public ClipboardEntry()
+        {
+            crDate = DateTime.Now;
+        }
+
         [XmlIgnore]
-        public virtual object Content { get { return (object)content; }
-            set
-            {
-                if (value != this.content)
+        public virtual object Content { 
+            get {
+                if (ClipboardReader.encryptionEnabled) {
+                    return DecryptString(ClipboardReader.encryptionKey);
+                } else
                 {
-                    this.content = value;
-                    NotifyPropertyChanged();
+                    return ByteToString(EncryptedContent);
                 }
             }
+            set
+            {
+                Encrypt(ClipboardReader.encryptionKey, (string)value);
+                NotifyPropertyChanged();
+            }
+        }
+        protected string ByteToString(byte[] bytes)
+        {
+            string response = string.Empty;
+
+            foreach (byte b in bytes)
+                response += (Char)b;
+
+            return response;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -70,9 +88,14 @@ namespace NipClip.Classes.Clipboard
             return this.Content.Equals(other.Content);
         }
 
+        public void Reencrypt(string newKey)
+        {
+            this.Encrypt(newKey, DecryptString(ClipboardReader.encryptionKey));
+        }
+
         public virtual byte[] EncryptedContent { get; set; }
 
-        public virtual void Encrypt(string key)
+        public virtual void Encrypt(string key, string content)
         {
             using (Aes aesAlg = Aes.Create())
             {
@@ -96,7 +119,7 @@ namespace NipClip.Classes.Clipboard
                     using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                     {
                         // Convert the content to bytes and encrypt it
-                        byte[] bytesContent = Encoding.UTF8.GetBytes(this.Content.ToString());
+                        byte[] bytesContent = Encoding.UTF8.GetBytes(content.ToString());
                         csEncrypt.Write(bytesContent, 0, bytesContent.Length);
                     }
                     EncryptedContent = msEncrypt.ToArray();
@@ -104,8 +127,11 @@ namespace NipClip.Classes.Clipboard
             }
         }
 
-        public virtual void Decrypt(string key)
+        public virtual string DecryptString(string key)
         {
+            if (EncryptedContent == null || EncryptedContent.Length == 0)
+                return "";
+        
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.KeySize = 256; // Set the key size to 256 bits
@@ -130,8 +156,7 @@ namespace NipClip.Classes.Clipboard
                         using (StreamReader srDecrypt = new StreamReader(csDecrypt))
                         {
                             // Read the decrypted bytes from the decrypting stream and return as string
-                            string decryptedContent = srDecrypt.ReadToEnd();
-                            Content = decryptedContent;
+                            return srDecrypt.ReadToEnd();
                         }
                     }
                 }
