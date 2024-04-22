@@ -1,5 +1,6 @@
 ﻿using NipClip.Classes;
 using NipClip.Classes.Clipboard;
+using NipClip.Classes.Keyboard;
 using NipClip.Classes.NipLang;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,8 @@ namespace NipClip
 
         public ApplicationSettings applicationSettings { get; set; }
 
+        public KeyboardReader keyboardReader { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -45,9 +48,13 @@ namespace NipClip
 
             this.stringManipTemplateSelection.Items.Add("var_dump($N0, $N1)");
             this.stringManipTemplateSelection.Items.Add("[$N0,$N1]");
-            this.stringManipTemplateSelection.Items.Add("@import \"$N\"\\n");
+            this.stringManipTemplateSelection.Items.Add("@import \"$N\"" + Environment.NewLine);
+
+            this.keyboardReader = new KeyboardReader();
+            this.keyboardReader.clipboardReader = this.clipboardReader;
 
             ClipboardReader.encryptionKey = this.applicationSettings.EncryptionKey;
+
             this.sortingDataGrid.ItemsSource = this.clipboardReader.clipboardStorage.entries;
         }
         private void stringManipTemplate_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -71,7 +78,12 @@ namespace NipClip
             List<ClipboardEntry> processList = new List<ClipboardEntry>();
             foreach (ClipboardEntry item in this.textList.SelectedItems)
             {
-                processList.Add(item);
+                var split = item.Split(this.stringManipInnerDelimiter.Text);
+                foreach (var entry in split)
+                {
+                    processList.Add(entry);
+                }
+
                 notEmpty = true;
             }
 

@@ -24,6 +24,8 @@ namespace NipClip.Classes.Clipboard
         
         Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
 
+        public static ClipboardEntry ignoreElement;
+
         public ClipboardStorage() {
             entrySorter = new EntrySorter(ref this.sortedEntries, ref this.entries);
         }
@@ -44,11 +46,18 @@ namespace NipClip.Classes.Clipboard
                 StringClipboardEntry lastEntry = (StringClipboardEntry) entries.First();
                 if (lastEntry != null && lastEntry.Content != null && !lastEntry.Content.Equals(entry.Content))
                 {
-                    // If the content matches, add the entry to the list
-                    this.dispatcher.Invoke(() =>
+                    if (ClipboardStorage.ignoreElement != null && entry.Content.Equals(ClipboardStorage.ignoreElement.Content))
                     {
-                        entries.Insert(0, entry);
-                    });
+
+                    }
+                    else
+                    {
+                        // If the content matches, add the entry to the list
+                        this.dispatcher.Invoke(() =>
+                        {
+                            entries.Insert(0, entry);
+                        });
+                    }
                 }
             }
         }

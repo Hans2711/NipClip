@@ -57,6 +57,27 @@ namespace NipClip.Classes.Clipboard
             return response;
         }
 
+        public virtual List<ClipboardEntry> Split(string delimiter)
+        {
+            List<ClipboardEntry> parts = new List<ClipboardEntry>();
+            string contentString = Content.ToString();
+            var splitContents = contentString.Split(new string[] { delimiter }, StringSplitOptions.None);
+
+            foreach (var part in splitContents)
+            {
+                var entry = (ClipboardEntry)this.MemberwiseClone();
+                entry.Content = part;
+                parts.Add(entry);
+            }
+
+            return parts;
+        }
+
+        public virtual void pasteToClipboard()
+        {
+            System.Windows.Clipboard.SetDataObject(this.Content);
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
