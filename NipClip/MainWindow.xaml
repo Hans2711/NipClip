@@ -46,7 +46,7 @@
                     <TextBox x:Name="stringManipOutput" Grid.Row="5" Grid.ColumnSpan="2" />
                 </Grid>
             </TabItem>
-            <TabItem Header="Sorter" Height="22" Margin="-2,-2,-2,0" VerticalAlignment="Top">
+            <TabItem Header="Sorter">
                 <DataGrid x:Name="sortingDataGrid" Margin="5,5" AutoGenerateColumns="False" >
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Content"
@@ -60,15 +60,17 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <TextBox x:Name="encryptionKey" Text="" Margin="10,20" />
-                    <Button x:Name="reencryptButton" Grid.Row="1" Margin="10,20" Content="Reencrypt" Click="reencryptButton_Click_1" />
+                    <Label Margin="10,0">Encryption Key</Label>
+                    <TextBox x:Name="encryptionKey" Grid.Row="1" Text="" Margin="10,5,10,15" />
+                    <CheckBox x:Name="disableOnDemandDecryption" Grid.Row="2" Margin="10,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Disable On-Demand Decryption" Click="CheckBox_Click"/>
+                    <Button x:Name="reencryptButton" Grid.Row="3" Margin="10,5,10,20" Content="Reencrypt" Click="reencryptButton_Click_1" />
                 </Grid>
             </TabItem>
         </TabControl>

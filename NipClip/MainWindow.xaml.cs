@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -46,7 +47,7 @@ namespace NipClip
             this.stringManipTemplateSelection.Items.Add("[$N0,$N1]");
             this.stringManipTemplateSelection.Items.Add("@import \"$N\"\\n");
 
-            this.clipboardReader.encryptionKey = this.applicationSettings.EncryptionKey;
+            ClipboardReader.encryptionKey = this.applicationSettings.EncryptionKey;
             this.sortingDataGrid.ItemsSource = this.clipboardReader.clipboardStorage.entries;
         }
         private void stringManipTemplate_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -84,7 +85,6 @@ namespace NipClip
             string output = languageProcessor.Process(processList, this.stringManipInput.Text);
 
             this.stringManipOutput.Text = output;
-
         }
 
         private void reencryptButton_Click_1(object sender, RoutedEventArgs e)
@@ -93,15 +93,48 @@ namespace NipClip
 
             if (!string.IsNullOrEmpty(this.encryptionKey.Text))
             {
-                this.applicationSettings.EncryptionKey = this.encryptionKey.Text;
-                this.clipboardReader.encryptionKey = this.applicationSettings.EncryptionKey;
-                this.clipboardReader.export();
-                this.reencryptButton.Content = "Done";
+                if (this.reencryptButton.Content != "Done")
+                {
+                    foreach (var entry in this.clipboardReader.clipboardStorage.entries)
+                    {
+                        entry.Reencrypt(this.encryptionKey.Text);
+                    }
+                    this.applicationSettings.EncryptionKey = this.encryptionKey.Text;
+                    ClipboardReader.encryptionKey = this.applicationSettings.EncryptionKey;
+
+                    this.clipboardReader.export();
+                    this.reencryptButton.Content = "Done";
+                    this.Refresh();
+                } else
+                {
+                    this.reencryptButton.Content = "No Need to do it Twice";
+                }
             } 
             else
             {
                 this.reencryptButton.Content = "Key is Empty";
             }
+        }
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            if ((bool)this.disableOnDemandDecryption.IsChecked)
+            {
+                ClipboardReader.encryptionEnabled = false;
+            } else
+            {
+                ClipboardReader.encryptionEnabled = true;
+            }
+            this.Refresh();
+        }
+
+        public void Refresh()
+        {
+            try
+            {
+                this.sortingDataGrid.Items.Refresh();
+                this.textList.Items.Refresh();
+            } catch { }
         }
     }
 }

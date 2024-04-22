@@ -26,11 +26,13 @@ namespace NipClip.Classes.Clipboard
 
         public bool workerBreaker = true;
 
-        public string encryptionKey = "DefaultKey";
+        public static string encryptionKey = "DefaultKey";
+
+        public static bool encryptionEnabled = true;
 
         public ClipboardReader(Window window, string encryptionKey)
         {
-            this.encryptionKey = encryptionKey;
+            ClipboardReader.encryptionKey = encryptionKey;
             this.window = window;
             this.clipboardStorage = new ClipboardStorage();
 
@@ -39,7 +41,6 @@ namespace NipClip.Classes.Clipboard
                 List<ClipboardEntry> entries = XmlConverter.DeserializeXml<List<ClipboardEntry>>("entries.xml");
                 foreach (ClipboardEntry entry in entries)
                 {
-                    entry.Decrypt(this.encryptionKey);
                     this.clipboardStorage.entries.Add(entry);
                 }
             }
@@ -57,19 +58,22 @@ namespace NipClip.Classes.Clipboard
         {
             while (this.workerBreaker)
             {
-                StringClipboardEntry entry = new StringClipboardEntry();
-                entry.Content = System.Windows.Clipboard.GetText();
+                try
+                {
+                    StringClipboardEntry entry = new StringClipboardEntry();
+                    entry.Content = System.Windows.Clipboard.GetText();
 
-                this.clipboardStorage.CheckPossibleNewEntry(entry);
-                Thread.Sleep(980);
+                    this.clipboardStorage.CheckPossibleNewEntry(entry);
+                    Thread.Sleep(980);
+                } catch (Exception ex) { }
             }
         }
 
         public void export()
         {
+            this.clipboardStorage.nEntries.Clear();
             foreach (var entry in this.clipboardStorage.entries)
             {
-                entry.Encrypt(this.encryptionKey);
                 this.clipboardStorage.nEntries.Add(entry);
             }
             string export = XmlConverter.ConvertToXml<List<ClipboardEntry>>(this.clipboardStorage.nEntries);

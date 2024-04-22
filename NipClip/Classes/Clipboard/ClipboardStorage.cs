@@ -30,21 +30,17 @@ namespace NipClip.Classes.Clipboard
 
         public void CheckPossibleNewEntry(StringClipboardEntry entry)
         {
-            if (entry == null || entry.StringContent == null)
+            if (entry == null || entry.Content == null)
             {
-                // If the entry or its content is null, do nothing
                 return;
             }
 
-            // Check if the entries list is empty
             if (entries.Count == 0)
             {
-                // If the list is empty, add the entry directly
                 entries.Add(entry);
             }
             else
             {
-                // Check if the content of the entry matches the content of the last entry in the list
                 StringClipboardEntry lastEntry = (StringClipboardEntry) entries.First();
                 if (lastEntry != null && lastEntry.Content != null && !lastEntry.Content.Equals(entry.Content))
                 {
