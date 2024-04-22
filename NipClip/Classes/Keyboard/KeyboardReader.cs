@@ -16,10 +16,12 @@ namespace NipClip.Classes.Keyboard
 
         public List<KeyboardHook.VKeys> buffer = new List<KeyboardHook.VKeys>();
 
-        public ClipboardReader clipboardReader { get; set; }
+        public List<MainWindow> mainWindows { get; set; }
 
-        public KeyboardReader()
+        public KeyboardReader(ref List<MainWindow> mainWindows)
         {
+            this.mainWindows = mainWindows;
+
             this.hook = new KeyboardHook();
             this.hook.Install();
 
@@ -27,6 +29,7 @@ namespace NipClip.Classes.Keyboard
             this.hook.KeyUp += new KeyboardHook.KeyboardHookCallback(keyboardHook_KeyUp);
 
             this.shortcuts.Add(new PasteLastShortcut());
+            this.shortcuts.Add(new CopyShortcut());
         }
 
         private void checkForShortcut()
@@ -37,7 +40,7 @@ namespace NipClip.Classes.Keyboard
                 {
                     if (keys.All(item => this.buffer.Contains(item)))
                     {
-                        shortcut.clipboardReader = this.clipboardReader;
+                        shortcut.mainWindows = this.mainWindows;
                         shortcut.Callback(keys);
                         this.buffer.Clear();
                         break;

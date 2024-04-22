@@ -49,12 +49,12 @@ namespace NipClip.Classes.Keyboard
                 index = index + 1;
             }
 
-            if (this.clipboardReader.clipboardStorage.entries.Count > index)
-            {
-                ClipboardStorage.ignoreElement = this.clipboardReader.clipboardStorage.entries[index];
+            //if (this.clipboardReader.clipboardStorage.entries.Count > index)
+            //{
+            //    ClipboardStorage.ignoreElement = this.clipboardReader.clipboardStorage.entries[index];
 
-                this.clipboardReader.clipboardStorage.entries[index].pasteToClipboard();
-            }
+            //    this.clipboardReader.clipboardStorage.entries[index].pasteToClipboard();
+            //}
         }
 
     }

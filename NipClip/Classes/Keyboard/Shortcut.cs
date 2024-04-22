@@ -11,7 +11,7 @@ namespace NipClip.Classes.Keyboard
     {
         public virtual List<List<KeyboardHook.VKeys>> Keys { get; set; }
 
-        public virtual ClipboardReader clipboardReader { get; set; }
+        public virtual List<MainWindow> mainWindows { get; set; }
 
         public virtual void Callback(List<KeyboardHook.VKeys> activationKeys)
         {

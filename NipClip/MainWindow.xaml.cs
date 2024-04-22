@@ -72,9 +72,6 @@ namespace NipClip
             this.stringManipTemplateSelection.Items.Add("[$N0,$N1]");
             this.stringManipTemplateSelection.Items.Add("@import \"$N\"" + Environment.NewLine);
 
-            this.keyboardReader = new KeyboardReader();
-            this.keyboardReader.clipboardReader = this.clipboardReader;
-
             ClipboardReader.encryptionKey = this.applicationSettings.EncryptionKey;
 
             this.sortingDataGrid.ItemsSource = this.clipboardReader.clipboardStorage.entries;

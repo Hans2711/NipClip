@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NipClip.Classes.Keyboard;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,10 +12,14 @@ namespace NipClip
     class WindowManager
     {
         public static List<MainWindow> clipboardMainWindows = new List<MainWindow>();
+
+        public static KeyboardReader keyboardReader;
         public static void CreateNewClipboardMainWindow()
         {
             if (clipboardMainWindows.Count <= 0)
             {
+                WindowManager.keyboardReader = new KeyboardReader(ref WindowManager.clipboardMainWindows);
+
                 MainWindow mainWindow = new MainWindow();
                 mainWindow.Show();
                 WindowManager.clipboardMainWindows.Add(mainWindow);
