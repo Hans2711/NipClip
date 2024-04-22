@@ -18,12 +18,19 @@ namespace NipClip.Classes.Clipboard
     {
         public virtual string type { get ; set; }
 
+        public virtual DateTime crDate { get; set; }
+
         [XmlIgnore]
         public virtual object content { get; set; }
 
         public virtual string? ToString()
         {
             return (string)Content;
+        }
+
+        public ClipboardEntry()
+        {
+            crDate = DateTime.Now;
         }
 
         [XmlIgnore]

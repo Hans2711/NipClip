@@ -47,6 +47,7 @@ namespace NipClip
             this.stringManipTemplateSelection.Items.Add("@import \"$N\"\\n");
 
             this.clipboardReader.encryptionKey = this.applicationSettings.EncryptionKey;
+            this.sortingDataGrid.ItemsSource = this.clipboardReader.clipboardStorage.entries;
         }
         private void stringManipTemplate_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -90,11 +91,17 @@ namespace NipClip
         {
             this.reencryptButton.Content = "Reencrypt";
 
-            this.applicationSettings.EncryptionKey = this.encryptionKey.Text;
-            this.clipboardReader.encryptionKey = this.applicationSettings.EncryptionKey;
-            this.clipboardReader.export();
-
-            this.reencryptButton.Content = "Done";
+            if (!string.IsNullOrEmpty(this.encryptionKey.Text))
+            {
+                this.applicationSettings.EncryptionKey = this.encryptionKey.Text;
+                this.clipboardReader.encryptionKey = this.applicationSettings.EncryptionKey;
+                this.clipboardReader.export();
+                this.reencryptButton.Content = "Done";
+            } 
+            else
+            {
+                this.reencryptButton.Content = "Key is Empty";
+            }
         }
     }
 }

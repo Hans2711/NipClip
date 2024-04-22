@@ -8,7 +8,7 @@
         Title="MainWindow" Height="450" Width="800" ContentRendered="Window_ContentRendered" Closing="Window_Closing">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="1.6*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -30,15 +30,29 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="30"/>
                         <RowDefinition Height="2*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBox x:Name="stringManipInput"  Grid.ColumnSpan="2" TextWrapping="Wrap" Text="var_dump($N0, $N1)"/>
-                    <Button Grid.Row="1" Click="Button_Click" Content="Process" />
-                    <ComboBox Grid.Row="1" Grid.Column="1" IsReadOnly="true" SelectionChanged="stringManipTemplate_SelectionChanged" x:Name="stringManipTemplateSelection" />
-                    <TextBox x:Name="stringManipOutput" Grid.Row="2" Grid.ColumnSpan="2" />
+                    <Label Grid.Row="0" FontSize="12" Margin="0,0" Grid.ColumnSpan="2">NipLang Substitution Key</Label>
+                    <TextBox x:Name="stringManipInput" Grid.Row="1" Grid.ColumnSpan="2" Margin="5,5,5,15" TextWrapping="Wrap" Text="var_dump($N0, $N1)"/>
+                    <Label Grid.Row="2" FontSize="12" Margin="0,0" Grid.ColumnSpan="2">Inner Delimiter</Label>
+                    <TextBox x:Name="stringManipInnerDelimiter" Grid.Row="3" Margin="5,5,5,15" Grid.ColumnSpan="2" TextWrapping="Wrap" Text=""/>
+                    <Button Grid.Row="4" Click="Button_Click" Content="Process" Margin="5,15" />
+                    <ComboBox Grid.Row="4" Grid.Column="1" IsReadOnly="true" Margin="5,15" SelectionChanged="stringManipTemplate_SelectionChanged" x:Name="stringManipTemplateSelection" />
+                    <TextBox x:Name="stringManipOutput" Grid.Row="5" Grid.ColumnSpan="2" />
                 </Grid>
+            </TabItem>
+            <TabItem Header="Sorter" Height="22" Margin="-2,-2,-2,0" VerticalAlignment="Top">
+                <DataGrid x:Name="sortingDataGrid" Margin="5,5" AutoGenerateColumns="False" >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Content"
+                      Binding="{Binding Content}" Width="*" />
+                    </DataGrid.Columns>
+                </DataGrid>
             </TabItem>
             <TabItem Header="Encryption">
                 <Grid>
@@ -53,8 +67,8 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <TextBox x:Name="encryptionKey" Text="" />
-                    <Button x:Name="reencryptButton" Grid.Row="1" Content="Reencrypt" Click="reencryptButton_Click_1" />
+                    <TextBox x:Name="encryptionKey" Text="" Margin="10,20" />
+                    <Button x:Name="reencryptButton" Grid.Row="1" Margin="10,20" Content="Reencrypt" Click="reencryptButton_Click_1" />
                 </Grid>
             </TabItem>
         </TabControl>

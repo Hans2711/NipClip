@@ -1,0 +1,9 @@
+﻿Clipboard Multiplexer
+
+Keyboard Hook (Shortcuts)
+
+Sorter
+
+String Conversion
+Inner delimiter
+Custom Templates
