@@ -30,28 +30,50 @@ namespace NipClip.Classes.Clipboard
 
         public static bool encryptionEnabled = true;
 
-        public ClipboardReader(Window window, string encryptionKey)
+        public string filename = "entries-default.xml";
+
+        public bool nonNativeClipboard = false;
+
+        public ClipboardReader(Window window, string encryptionKey, string filename = null)
         {
+            if (filename != null)
+            {
+                this.filename = filename;
+                this.nonNativeClipboard = true;
+            }
+
             ClipboardReader.encryptionKey = encryptionKey;
             this.window = window;
             this.clipboardStorage = new ClipboardStorage();
 
-            if (File.Exists("entries.xml"))
+            if (File.Exists(this.filename))
             {
-                List<ClipboardEntry> entries = XmlConverter.DeserializeXml<List<ClipboardEntry>>("entries.xml");
+                List<ClipboardEntry> entries = XmlConverter.DeserializeXml<List<ClipboardEntry>>(this.filename);
                 foreach (ClipboardEntry entry in entries)
                 {
                     this.clipboardStorage.entries.Add(entry);
                 }
             }
 
-            this.hook = new ClipboardHook(this.window);
-            this.hook.ClipboardChanged += this.clipboardStorage.ClipboardChanged;
-            this.clipboardStorage.ClipboardChanged();
+            if (!this.nonNativeClipboard)
+            {
+                this.hook = new ClipboardHook(this.window);
+                this.hook.ClipboardChanged += this.clipboardStorage.ClipboardChanged;
+                this.clipboardStorage.ClipboardChanged();
 
-            this.workerThread = new Thread(this.worker);
-            this.workerThread.SetApartmentState(ApartmentState.STA);
-            this.workerThread.Start();
+                this.workerThread = new Thread(this.worker);
+                this.workerThread.SetApartmentState(ApartmentState.STA);
+                this.workerThread.Start();
+            }
+            else
+            {
+                if (this.clipboardStorage.entries.Count == 0)
+                {
+                    StringClipboardEntry entry = new StringClipboardEntry();
+                    entry.Content = "====";
+                    this.clipboardStorage.entries.Add(entry);
+                }
+            }
         }
 
         private void worker()
@@ -79,7 +101,7 @@ namespace NipClip.Classes.Clipboard
             string export = XmlConverter.ConvertToXml<List<ClipboardEntry>>(this.clipboardStorage.nEntries);
             export = export.Replace("encoding=\"utf-16\"", "");
 
-            File.WriteAllText("entries.xml", export);
+            File.WriteAllText(this.filename, export);
         }
     }
 }

@@ -32,9 +32,23 @@ namespace NipClip
 
         public KeyboardReader keyboardReader { get; set; }
 
+        public bool nonNativeClipboard = false;
+
+        public int clipboardID = 0;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            this.Title = "NipClip | Windows Default";
+        }
+        
+        public MainWindow(int clipboardID)
+        {
+            InitializeComponent();
+            this.nonNativeClipboard = true;
+            this.clipboardID = clipboardID;
+            this.Title = "NipClip | Custom Clipboard: " + this.clipboardID;
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
@@ -42,8 +56,16 @@ namespace NipClip
             this.applicationSettings = new ApplicationSettings();
             this.applicationSettings.restore();
 
-            this.clipboardReader = new ClipboardReader(this, this.applicationSettings.EncryptionKey);
+            if (this.nonNativeClipboard)
+            {
+                this.clipboardReader = new ClipboardReader(this, this.applicationSettings.EncryptionKey, "entries-" + this.clipboardID + ".xml");
+            }
+            else
+            {
+                this.clipboardReader = new ClipboardReader(this, this.applicationSettings.EncryptionKey);
+            }
             this.textList.ItemsSource = clipboardReader.clipboardStorage.entries;
+
             this.DataContext = clipboardReader.clipboardStorage.entries;
 
             this.stringManipTemplateSelection.Items.Add("var_dump($N0, $N1)");
@@ -147,6 +169,11 @@ namespace NipClip
                 this.sortingDataGrid.Items.Refresh();
                 this.textList.Items.Refresh();
             } catch { }
+        }
+
+        private void createNewClipboardButton_Click(object sender, RoutedEventArgs e)
+        {
+            WindowManager.CreateNewClipboardMainWindow();
         }
     }
 }
