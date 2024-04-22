@@ -1,10 +1,14 @@
-﻿Clipboard Multiplexer
+﻿- Clipboard Multiplexer
+-- Encryption
 
-Keyboard Hook (Shortcuts)
+- Keyboard Hook (Shortcuts)
+-- Paste
+-- Copy Improove
 
-Sorter
 
-Image support
+- Sorter
 
-String Conversion
-Custom Templates
+- Image support
+
+- String Conversion
+-- Custom Templates
