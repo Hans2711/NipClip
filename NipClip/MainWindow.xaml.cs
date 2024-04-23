@@ -9,6 +9,7 @@ using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Forms = System.Windows.Forms;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -18,6 +19,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Printing;
 
 namespace NipClip
 {
@@ -35,6 +37,8 @@ namespace NipClip
         public bool nonNativeClipboard = false;
 
         public int clipboardID = 0;
+
+        public Forms.NotifyIcon notifyIcon { get; set; }
 
         public MainWindow()
         {
@@ -75,20 +79,31 @@ namespace NipClip
             ClipboardReader.encryptionKey = this.applicationSettings.EncryptionKey;
 
             this.sortingDataGrid.ItemsSource = this.clipboardReader.clipboardStorage.entries;
+
+            this.notifyIcon = new Forms.NotifyIcon();
+            this.notifyIcon.Icon = new System.Drawing.Icon("logo-black.ico");
+            this.notifyIcon.Visible = true;
+            this.notifyIcon.Text = this.Title;
+
+            this.notifyIcon.Click +=
+                delegate (object sender, EventArgs args)
+                {
+                    this.Show();
+                };
+
         }
         private void stringManipTemplate_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.stringManipInput.Text = this.stringManipTemplateSelection.SelectedItem.ToString();
         }
 
-        private void textList_ContextMenuClosing(object sender, ContextMenuEventArgs e)
-        {
-        }
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.clipboardReader.export();
             this.applicationSettings.save();
+
+            e.Cancel = true;
+            this.Hide();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

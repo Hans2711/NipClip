@@ -47,7 +47,6 @@ namespace NipClip.Classes.Keyboard
                     }
                 }
             }
-
         }
 
         private void keyboardHook_KeyUp(KeyboardHook.VKeys key)

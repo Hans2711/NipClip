@@ -1,10 +1,16 @@
 ﻿- Clipboard Multiplexer
 -- Encryption
+-- Options Page
 
 - Keyboard Hook (Shortcuts)
 -- Paste
 -- Copy Improove
+-- https://learn.microsoft.com/en-us/answers/questions/840881/how-to-get-selectedtext-from-other-applications
 
+- Options Page
+
+- Notify Icon
+-- https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.notifyicon.contextmenu?view=netframework-4.8.1&redirectedfrom=MSDN#System_Windows_Forms_NotifyIcon_ContextMenu
 
 - Sorter
 
