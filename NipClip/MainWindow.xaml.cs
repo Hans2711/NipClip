@@ -85,6 +85,11 @@ namespace NipClip
             this.notifyIcon.Visible = true;
             this.notifyIcon.Text = this.Title;
 
+            this.notifyIcon.ContextMenuStrip = new Forms.ContextMenuStrip();
+            this.notifyIcon.ContextMenuStrip.Items.Add(this.Title, null, null);
+            this.notifyIcon.ContextMenuStrip.Items.Add("Copy Last Entry", null, this.copyLastItem);
+            this.notifyIcon.ContextMenuStrip.Items.Add("Kill", null, this.kill);
+
             this.notifyIcon.Click +=
                 delegate (object sender, EventArgs args)
                 {
@@ -92,6 +97,18 @@ namespace NipClip
                 };
 
         }
+
+        public void copyLastItem(Object sender, System.EventArgs e)
+        {
+            this.clipboardReader.clipboardStorage.entries.First().pasteToClipboard();
+        }
+
+        public void kill(Object sender, System.EventArgs e)
+        {
+            this.clipboardReader.kill();
+        }
+
+
         private void stringManipTemplate_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.stringManipInput.Text = this.stringManipTemplateSelection.SelectedItem.ToString();

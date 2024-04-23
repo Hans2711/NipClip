@@ -20,7 +20,7 @@ namespace NipClip.Classes.Clipboard
 
         public ClipboardStorage clipboardStorage;
 
-        public Window window;
+        public MainWindow window;
 
         public Thread workerThread;
 
@@ -34,7 +34,7 @@ namespace NipClip.Classes.Clipboard
 
         public bool nonNativeClipboard = false;
 
-        public ClipboardReader(Window window, string encryptionKey, string filename = null)
+        public ClipboardReader(MainWindow window, string encryptionKey, string filename = null)
         {
             if (filename != null)
             {
@@ -74,6 +74,17 @@ namespace NipClip.Classes.Clipboard
                     this.clipboardStorage.entries.Add(entry);
                 }
             }
+        }
+
+        public void kill()
+        {
+            if (this.workerThread != null) { this.workerThread.Abort(); }
+
+            this.clipboardStorage.entries.Clear();
+            File.Delete(this.filename); 
+
+            this.window.notifyIcon.Visible = false;
+            this.window.Close();
         }
 
         private void worker()
