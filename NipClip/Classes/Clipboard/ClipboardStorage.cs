@@ -44,7 +44,7 @@ namespace NipClip.Classes.Clipboard
             else
             {
                 StringClipboardEntry lastEntry = (StringClipboardEntry) entries.First();
-                if (lastEntry != null && lastEntry.Content != null && !lastEntry.Content.Equals(entry.Content))
+                if (lastEntry != null && lastEntry.Content != null && !lastEntry.Content.Equals(entry.Content) && entry.Content != null)
                 {
                     if (ClipboardStorage.ignoreElement != null && entry.Content.Equals(ClipboardStorage.ignoreElement.Content))
                     {

@@ -75,6 +75,7 @@ namespace NipClip.Classes.NipLang
                     }
                 }
                 output += after;
+                output = output.Replace("\n", Environment.NewLine);
 
                 return output;
             }
@@ -93,6 +94,7 @@ namespace NipClip.Classes.NipLang
                 {
                     outputString += str;
                 }
+                outputString = outputString.Replace("\\n", Environment.NewLine);
 
                 return outputString;
             }

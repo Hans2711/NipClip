@@ -1,9 +1,12 @@
-﻿using NipClip.Classes.Keyboard;
+﻿using NipClip.Classes;
+using NipClip.Classes.Keyboard;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -14,15 +17,62 @@ namespace NipClip
         public static List<MainWindow> clipboardMainWindows = new List<MainWindow>();
 
         public static KeyboardReader keyboardReader;
+        public static ApplicationSettings applicationSettings { get; set; }
+
+
+        public static void RefreshAll()
+        {
+            foreach (var window in clipboardMainWindows)
+            {
+                window.Refresh();
+            }
+        }
+
+        public static void RencryptAll(string newKey)
+        {
+            foreach (MainWindow window in clipboardMainWindows)
+            {
+                foreach (var entry in window.clipboardReader.clipboardStorage.entries)
+                {
+                    entry.Reencrypt(newKey);
+                }
+            }
+
+            RefreshAll();
+        }
+
+        public static void CloseAll()
+        {
+            foreach (MainWindow window in clipboardMainWindows)
+            {
+                window.clipboardReader.export();
+            }
+            Environment.Exit(0);
+        }
+
+        public static void KillAll()
+        {
+            foreach (MainWindow window in clipboardMainWindows)
+            {
+                window.clipboardReader.purgeData();
+            }
+            Environment.Exit(0);
+        }
+
+
         public static void CreateNewClipboardMainWindow()
         {
             if (clipboardMainWindows.Count <= 0)
             {
+                WindowManager.applicationSettings = new ApplicationSettings();
+                WindowManager.applicationSettings.restore();
+
                 WindowManager.keyboardReader = new KeyboardReader(ref WindowManager.clipboardMainWindows);
 
                 MainWindow mainWindow = new MainWindow();
                 mainWindow.Show();
                 WindowManager.clipboardMainWindows.Add(mainWindow);
+                Thread.Sleep(100);
 
                 DirectoryInfo d = new DirectoryInfo(Directory.GetCurrentDirectory());
                 FileInfo[] Files = d.GetFiles("entries*.xml");
@@ -38,6 +88,7 @@ namespace NipClip
                             MainWindow mainWindow1 = new MainWindow(number);
                             mainWindow1.Show();
                             WindowManager.clipboardMainWindows.Add(mainWindow1);
+                            Thread.Sleep(100);
                         }
                     }
                 }

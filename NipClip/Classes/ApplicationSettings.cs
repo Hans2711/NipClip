@@ -13,8 +13,15 @@ namespace NipClip.Classes
     {
         public string EncryptionKey { set; get; }
 
+        public List<string> nipLangTemplates = new List<string>();
+
         public ApplicationSettings() {
             this.EncryptionKey = "DefaultKey";
+
+            this.nipLangTemplates.Add("var_dump($N0, $N1)");
+            this.nipLangTemplates.Add("[$N0,$N1]");
+            this.nipLangTemplates.Add("@import \"$N\"" + Environment.NewLine);
+
         }
 
         public void save()

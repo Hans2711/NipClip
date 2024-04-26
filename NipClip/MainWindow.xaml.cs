@@ -30,8 +30,6 @@ namespace NipClip
     {
         public ClipboardReader clipboardReader { get; set; }
 
-        public ApplicationSettings applicationSettings { get; set; }
-
         public KeyboardReader keyboardReader { get; set; }
 
         public bool nonNativeClipboard = false;
@@ -57,26 +55,21 @@ namespace NipClip
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            this.applicationSettings = new ApplicationSettings();
-            this.applicationSettings.restore();
-
             if (this.nonNativeClipboard)
             {
-                this.clipboardReader = new ClipboardReader(this, this.applicationSettings.EncryptionKey, "entries-" + this.clipboardID + ".xml");
+                this.clipboardReader = new ClipboardReader(this, "entries-" + this.clipboardID + ".xml");
             }
             else
             {
-                this.clipboardReader = new ClipboardReader(this, this.applicationSettings.EncryptionKey);
+                this.clipboardReader = new ClipboardReader(this, "entries-default.xml");
             }
             this.textList.ItemsSource = clipboardReader.clipboardStorage.entries;
 
             this.DataContext = clipboardReader.clipboardStorage.entries;
 
-            this.stringManipTemplateSelection.Items.Add("var_dump($N0, $N1)");
-            this.stringManipTemplateSelection.Items.Add("[$N0,$N1]");
-            this.stringManipTemplateSelection.Items.Add("@import \"$N\"" + Environment.NewLine);
+            this.stringManipTemplateSelection.ItemsSource = WindowManager.applicationSettings.nipLangTemplates;
 
-            ClipboardReader.encryptionKey = this.applicationSettings.EncryptionKey;
+            ClipboardReader.encryptionKey = WindowManager.applicationSettings.EncryptionKey;
 
             this.sortingDataGrid.ItemsSource = this.clipboardReader.clipboardStorage.entries;
 
@@ -89,6 +82,9 @@ namespace NipClip
             this.notifyIcon.ContextMenuStrip.Items.Add(this.Title, null, null);
             this.notifyIcon.ContextMenuStrip.Items.Add("Copy Last Entry", null, this.copyLastItem);
             this.notifyIcon.ContextMenuStrip.Items.Add("Kill", null, this.kill);
+            this.notifyIcon.ContextMenuStrip.Items.Add("Kill All", null, this.killAll);
+            this.notifyIcon.ContextMenuStrip.Items.Add("Close All", null, this.closeAll);
+            this.notifyIcon.ContextMenuStrip.Items.Add("Close", null, this.close);
 
             this.notifyIcon.Click +=
                 delegate (object sender, EventArgs args)
@@ -105,7 +101,24 @@ namespace NipClip
 
         public void kill(Object sender, System.EventArgs e)
         {
-            this.clipboardReader.kill();
+            this.clipboardReader.purgeData();
+            this.Close();
+        }
+
+        public void killAll(Object sender, System.EventArgs e)
+        {
+            WindowManager.KillAll();
+        }
+
+        public void close(Object sender, System.EventArgs e)
+        {
+            this.clipboardReader.export();
+            this.Close();
+        }
+
+        public void closeAll(Object sender, System.EventArgs e)
+        {
+            WindowManager.CloseAll();
         }
 
 
@@ -117,7 +130,7 @@ namespace NipClip
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.clipboardReader.export();
-            this.applicationSettings.save();
+            WindowManager.applicationSettings.save();
 
             e.Cancel = true;
             this.Hide();
@@ -127,12 +140,20 @@ namespace NipClip
         {
             bool notEmpty = false;
             List<ClipboardEntry> processList = new List<ClipboardEntry>();
-            foreach (ClipboardEntry item in this.textList.SelectedItems)
+
+            for (int i = 0; i < this.textList.SelectedItems.Count; i++)
             {
-                var split = item.Split(this.stringManipInnerDelimiter.Text);
-                foreach (var entry in split)
+                if (this.textList.SelectedItems[i] is ClipboardEntry entry)
                 {
-                    processList.Add(entry);
+                    var split = entry.Split(this.stringManipInnerDelimiter.Text.Replace("\\n", Environment.NewLine));
+                    foreach (var entryy in split)
+                    {
+                        if (entryy.Content == null)
+                        {
+                            continue;
+                        }
+                        processList.Add(entryy);
+                    }
                 }
 
                 notEmpty = true;
@@ -158,12 +179,9 @@ namespace NipClip
             {
                 if (this.reencryptButton.Content != "Done")
                 {
-                    foreach (var entry in this.clipboardReader.clipboardStorage.entries)
-                    {
-                        entry.Reencrypt(this.encryptionKey.Text);
-                    }
-                    this.applicationSettings.EncryptionKey = this.encryptionKey.Text;
-                    ClipboardReader.encryptionKey = this.applicationSettings.EncryptionKey;
+                    WindowManager.RencryptAll(this.encryptionKey.Text);
+                    WindowManager.applicationSettings.EncryptionKey = this.encryptionKey.Text;
+                    ClipboardReader.encryptionKey = WindowManager.applicationSettings.EncryptionKey;
 
                     this.clipboardReader.export();
                     this.reencryptButton.Content = "Done";
@@ -188,7 +206,8 @@ namespace NipClip
             {
                 ClipboardReader.encryptionEnabled = true;
             }
-            this.Refresh();
+            
+            WindowManager.RefreshAll();
         }
 
         public void Refresh()

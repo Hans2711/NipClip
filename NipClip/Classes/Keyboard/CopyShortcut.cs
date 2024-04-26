@@ -105,7 +105,7 @@ namespace NipClip.Classes.Keyboard
                 index = 9;
             }
 
-            KeyboardSender.SendCopyAction();
+            //KeyboardSender.SendCopyAction();
 
             string content = System.Windows.Clipboard.GetText();
             StringClipboardEntry entry = new StringClipboardEntry();

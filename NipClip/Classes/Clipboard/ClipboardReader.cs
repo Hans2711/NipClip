@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using System.ComponentModel;
 using System.Threading;
 using System.Xml.Serialization;
+using System.Security.Policy;
 
 namespace NipClip.Classes.Clipboard
 {
@@ -34,9 +35,14 @@ namespace NipClip.Classes.Clipboard
 
         public bool nonNativeClipboard = false;
 
-        public ClipboardReader(MainWindow window, string encryptionKey, string filename = null)
+        public ClipboardReaderSettings settings {  get; set; }
+
+        public ClipboardReader(MainWindow window, string filename = null)
         {
-            if (filename != null)
+            this.settings = new ClipboardReaderSettings(filename);
+            this.settings.restore();
+
+            if (filename != null && !filename.Contains("default"))
             {
                 this.filename = filename;
                 this.nonNativeClipboard = true;
@@ -107,12 +113,27 @@ namespace NipClip.Classes.Clipboard
             this.clipboardStorage.nEntries.Clear();
             foreach (var entry in this.clipboardStorage.entries)
             {
+                if (entry.Content == null)
+                {
+                    continue;
+                }
                 this.clipboardStorage.nEntries.Add(entry);
             }
+
             string export = XmlConverter.ConvertToXml<List<ClipboardEntry>>(this.clipboardStorage.nEntries);
             export = export.Replace("encoding=\"utf-16\"", "");
 
+            this.settings.save();
+
             File.WriteAllText(this.filename, export);
+        }
+
+        public void purgeData()
+        {
+            this.clipboardStorage.nEntries.Clear();
+            this.clipboardStorage.entries.Clear();
+
+            this.export();
         }
     }
 }
