@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using NipClip.Classes.Keyboard;
 
 namespace NipClip.Classes
 {
@@ -16,6 +17,8 @@ namespace NipClip.Classes
         public string EncryptionKey { set; get; }
 
         public List<string> nipLangTemplates = new List<string>();
+
+        public KeyboardHook.VKeys leaderKey { get; set; }
 
         public ApplicationSettings() { }
 
@@ -51,6 +54,7 @@ namespace NipClip.Classes
                 ApplicationSettings settings = XmlConverter.DeserializeXml<ApplicationSettings>("settings.xml");
                 this.EncryptionKey = settings.EncryptionKey;
                 this.nipLangTemplates = settings.nipLangTemplates;
+                this.leaderKey = settings.leaderKey;
 
                 if (this.nipLangTemplates.Count <= 0)
                 {

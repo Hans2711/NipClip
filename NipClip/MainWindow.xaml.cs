@@ -93,6 +93,9 @@ namespace NipClip
                 };
 
             this.stringManipInput_GotFocus();
+
+            this.currentLeader.ItemsSource = Enum.GetValues(typeof(KeyboardHook.VKeys));
+            this.currentLeader.SelectedItem = WindowManager.applicationSettings.leaderKey;
         }
 
         public void copyLastItem(Object sender, System.EventArgs e)
@@ -232,6 +235,7 @@ namespace NipClip
             {
                 this.sortingDataGrid.Items.Refresh();
                 this.textList.Items.Refresh();
+                this.currentLeader.SelectedItem = WindowManager.applicationSettings.leaderKey;
             } catch { }
         }
 
@@ -253,6 +257,19 @@ namespace NipClip
                 }
 
             }
+        }
+
+        private void currentLeader_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            WindowManager.applicationSettings.leaderKey = (KeyboardHook.VKeys)this.currentLeader.SelectedItem;
+            WindowManager.applicationSettings.save();
+        }
+
+        private void changeCurrentLeaderButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.changeCurrentLeaderButton.Content = "Waiting for input";
+            WindowManager.ChangeKeyboardLeader();
+            this.changeCurrentLeaderButton.Content = "Change";
         }
     }
 }

@@ -41,6 +41,11 @@ namespace NipClip
             RefreshAll();
         }
 
+        public static void ChangeKeyboardLeader()
+        {
+            keyboardReader.fillNextInputToLeaderKey();
+        }
+
         public static void CloseAll()
         {
             foreach (MainWindow window in clipboardMainWindows)
@@ -119,8 +124,8 @@ namespace NipClip
                     }
                 }
                 
-                TransparentWindow transparentWindow = new TransparentWindow();
-                transparentWindow.Show();
+                //TransparentWindow transparentWindow = new TransparentWindow();
+                //transparentWindow.Show();
             }
             else
             {

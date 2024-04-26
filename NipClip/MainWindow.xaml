@@ -84,6 +84,26 @@
                             <Button x:Name="reencryptButton" Grid.Row="3" Margin="10,5,10,20" Content="Reencrypt" Click="reencryptButton_Click_1" />
                         </Grid>
                     </TabItem>
+                    <TabItem Header="Keyboard Shortcuts">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="0.6*"/>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Label Margin="10,0">Leader</Label>
+                            <ComboBox Grid.Row="1" x:Name="currentLeader" Margin="10,20" SelectionChanged="currentLeader_SelectionChanged"></ComboBox>
+                            <Button x:Name="changeCurrentLeaderButton" Grid.Row="1" Grid.Column="1" Margin="10,20" Click="changeCurrentLeaderButton_Click">Change</Button>
+
+                        </Grid>
+                    </TabItem>
                 </TabControl>
             </TabItem>
         </TabControl>
@@ -97,7 +117,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Image Grid.Row="0" Grid.RowSpan="2" Source="/logo-black.png" />
+            <Image Grid.Row="0" Grid.RowSpan="2" Source="/logo-black.png" HorizontalAlignment="Center" />
 
             <Button Grid.Column="1"  x:Name="createNewClipboardButton" Margin="10,15" Click="createNewClipboardButton_Click">Create new Clipboard</Button>
         </Grid>

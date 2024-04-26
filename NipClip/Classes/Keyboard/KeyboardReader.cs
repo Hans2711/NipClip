@@ -18,6 +18,8 @@ namespace NipClip.Classes.Keyboard
 
         public List<MainWindow> mainWindows { get; set; }
 
+        public bool setNextLeaderKey { get; set; }
+
         public KeyboardReader(ref List<MainWindow> mainWindows)
         {
             this.mainWindows = mainWindows;
@@ -30,6 +32,11 @@ namespace NipClip.Classes.Keyboard
 
             this.shortcuts.Add(new PasteLastShortcut());
             this.shortcuts.Add(new CopyShortcut());
+        }
+
+        public void fillNextInputToLeaderKey()
+        {
+            this.setNextLeaderKey = true;
         }
 
         private bool checkForShortcut()
@@ -56,6 +63,13 @@ namespace NipClip.Classes.Keyboard
         }
         private bool keyboardHook_KeyDown(KeyboardHook.VKeys key)
         {
+            if (this.setNextLeaderKey)
+            {
+                WindowManager.applicationSettings.leaderKey = key;
+                WindowManager.applicationSettings.save();
+                WindowManager.RefreshAll();
+            }
+
             if (!this.buffer.Contains(key)) 
             {
                 this.buffer.Add(key);
