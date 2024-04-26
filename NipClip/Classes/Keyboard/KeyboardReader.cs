@@ -32,7 +32,7 @@ namespace NipClip.Classes.Keyboard
             this.shortcuts.Add(new CopyShortcut());
         }
 
-        private void checkForShortcut()
+        private bool checkForShortcut()
         {
             foreach (var shortcut in this.shortcuts)
             {
@@ -41,27 +41,31 @@ namespace NipClip.Classes.Keyboard
                     if (keys.All(item => this.buffer.Contains(item)))
                     {
                         shortcut.mainWindows = this.mainWindows;
-                        shortcut.Callback(keys);
-                        this.buffer.Clear();
-                        break;
+                        return shortcut.Callback(keys);
                     }
                 }
             }
+            return false;
         }
 
-        private void keyboardHook_KeyUp(KeyboardHook.VKeys key)
+        private bool keyboardHook_KeyUp(KeyboardHook.VKeys key)
         {
-            this.checkForShortcut();
             this.buffer.Remove(key);
             Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] KeyUp Event {" + key.ToString() + "}");
+            return true;
         }
-        private void keyboardHook_KeyDown(KeyboardHook.VKeys key)
+        private bool keyboardHook_KeyDown(KeyboardHook.VKeys key)
         {
             if (!this.buffer.Contains(key)) 
             {
                 this.buffer.Add(key);
+                if (this.checkForShortcut())
+                {
+                    return false;
+                }
             }
             Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] KeyDown Event {" + key.ToString() + "}");
+            return true;
         }
     }
 }

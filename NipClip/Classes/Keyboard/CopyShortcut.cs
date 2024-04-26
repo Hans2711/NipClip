@@ -65,7 +65,7 @@ namespace NipClip.Classes.Keyboard
             this.Keys.Reverse();
         }
 
-        public override void Callback(List<KeyboardHook.VKeys> activationKeys)
+        public override bool Callback(List<KeyboardHook.VKeys> activationKeys)
         {
             int index = 1;
             if (activationKeys.Contains(KeyboardHook.VKeys.KEY_1))
@@ -118,6 +118,8 @@ namespace NipClip.Classes.Keyboard
                     mainWindow.clipboardReader.clipboardStorage.CheckPossibleNewEntry(entry);
                 }
             }
+
+            return true;
         }
     }
 }

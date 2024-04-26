@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace NipClip.Classes
 {
@@ -15,13 +17,24 @@ namespace NipClip.Classes
 
         public List<string> nipLangTemplates = new List<string>();
 
-        public ApplicationSettings() {
-            this.EncryptionKey = "DefaultKey";
+        public ApplicationSettings() { }
 
-            this.nipLangTemplates.Add("var_dump($N0, $N1)");
-            this.nipLangTemplates.Add("[$N0,$N1]");
-            this.nipLangTemplates.Add("@import \"$N\"" + Environment.NewLine);
 
+        public void saveStringTemplate(string template)
+        {
+            if (!this.nipLangTemplates.Contains(template))
+            {
+                this.nipLangTemplates.Add(template);
+            }
+
+        }
+
+        public void deleteStringTemplate(string template)
+        {
+            if (this.nipLangTemplates.Contains(template))
+            {
+                this.nipLangTemplates.Remove(template);
+            }
         }
 
         public void save()
@@ -37,6 +50,19 @@ namespace NipClip.Classes
             {
                 ApplicationSettings settings = XmlConverter.DeserializeXml<ApplicationSettings>("settings.xml");
                 this.EncryptionKey = settings.EncryptionKey;
+                this.nipLangTemplates = settings.nipLangTemplates;
+
+                if (this.nipLangTemplates.Count <= 0)
+                {
+                    this.nipLangTemplates.Add("var_dump($N0, $N1)");
+                    this.nipLangTemplates.Add("[$N0,$N1]");
+                    this.nipLangTemplates.Add("@import \"$N\"\\n");
+                }
+
+                if (string.IsNullOrEmpty(this.EncryptionKey))
+                {
+                    this.EncryptionKey = "DefaultKey";
+                }
             }
         }
     }

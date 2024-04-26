@@ -40,7 +40,7 @@ namespace NipClip.Classes.Keyboard
             this.Keys.Reverse();
         }
 
-        public override void Callback(List<KeyboardHook.VKeys> activationKeys)
+        public override bool Callback(List<KeyboardHook.VKeys> activationKeys)
         {
             int index = 1;
             if (activationKeys.Contains(KeyboardHook.VKeys.UP))
@@ -55,6 +55,7 @@ namespace NipClip.Classes.Keyboard
 
             //    this.clipboardReader.clipboardStorage.entries[index].pasteToClipboard();
             //}
+            return true;
         }
 
     }

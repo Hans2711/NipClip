@@ -31,19 +31,26 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
-                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="*"/>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="0.5*"/>
+                        <RowDefinition Height="0.5*"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="2*"/>
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0" FontSize="12" Margin="0,0" Grid.ColumnSpan="2">NipLang Substitution Key</Label>
-                    <TextBox x:Name="stringManipInput" Grid.Row="1" Grid.ColumnSpan="2" Margin="5,5,5,15" TextWrapping="Wrap" Text="var_dump($N0, $N1)"/>
+                    <TextBox x:Name="stringManipInput" Grid.Row="1" Grid.ColumnSpan="2" Margin="5,5,5,15" TextWrapping="Wrap" Text="var_dump($N0, $N1)" GotFocus="stringManipInput_GotFocus"/>
                     <Label Grid.Row="2" FontSize="12" Margin="0,0" Grid.ColumnSpan="2">Inner Delimiter</Label>
                     <TextBox x:Name="stringManipInnerDelimiter" Grid.Row="3" Margin="5,5,5,5" Grid.ColumnSpan="2" TextWrapping="Wrap" Text=""/>
-                    <Button Grid.Row="4" Click="Button_Click" Content="Process" Margin="5,15" />
-                    <ComboBox Grid.Row="4" Grid.Column="1" IsReadOnly="true" Margin="5,15" SelectionChanged="stringManipTemplate_SelectionChanged" x:Name="stringManipTemplateSelection" />
-                    <TextBox x:Name="stringManipOutput" Grid.Row="5" Grid.ColumnSpan="2" />
+                    <Button Grid.Row="5" Click="Button_Click" Content="Process" Margin="5,5" />
+                    <ComboBox Grid.Row="5" Grid.Column="1" IsReadOnly="true" Margin="5,5" SelectionChanged="stringManipTemplate_SelectionChanged" x:Name="stringManipTemplateSelection" />
+
+                    <Button Grid.Row="6" Click="deleteStringTemplateClick" Content="Delete Template" Margin="5,5" />
+                    <Button Grid.Row="6" Grid.Column="1" Click="saveStringTemplateClick" Content="Save Template" Margin="5,5" />
+                    
+                    
+                    <TextBox x:Name="stringManipOutput" Grid.Row="7" Grid.ColumnSpan="2" Margin="5" />
                 </Grid>
             </TabItem>
             <TabItem Header="Sorter">
@@ -90,8 +97,9 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            <Image Grid.Row="0" Grid.RowSpan="2" Source="/logo-black.png" />
 
-            <Button x:Name="createNewClipboardButton" Margin="10,15" Click="createNewClipboardButton_Click">Create new Clipboard</Button>
+            <Button Grid.Column="1"  x:Name="createNewClipboardButton" Margin="10,15" Click="createNewClipboardButton_Click">Create new Clipboard</Button>
         </Grid>
 
     </Grid>

@@ -81,8 +81,8 @@ namespace NipClip
             this.notifyIcon.ContextMenuStrip = new Forms.ContextMenuStrip();
             this.notifyIcon.ContextMenuStrip.Items.Add(this.Title, null, null);
             this.notifyIcon.ContextMenuStrip.Items.Add("Copy Last Entry", null, this.copyLastItem);
-            this.notifyIcon.ContextMenuStrip.Items.Add("Kill", null, this.kill);
             this.notifyIcon.ContextMenuStrip.Items.Add("Kill All", null, this.killAll);
+            this.notifyIcon.ContextMenuStrip.Items.Add("Kill", null, this.kill);
             this.notifyIcon.ContextMenuStrip.Items.Add("Close All", null, this.closeAll);
             this.notifyIcon.ContextMenuStrip.Items.Add("Close", null, this.close);
 
@@ -92,6 +92,7 @@ namespace NipClip
                     this.Show();
                 };
 
+            this.stringManipInput_GotFocus();
         }
 
         public void copyLastItem(Object sender, System.EventArgs e)
@@ -124,7 +125,10 @@ namespace NipClip
 
         private void stringManipTemplate_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.stringManipInput.Text = this.stringManipTemplateSelection.SelectedItem.ToString();
+            if (this.stringManipTemplateSelection.SelectedItem != null)
+            {
+                this.stringManipInput.Text = this.stringManipTemplateSelection.SelectedItem.ToString();
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -168,6 +172,8 @@ namespace NipClip
             this.clipboardReader.export();
             string output = languageProcessor.Process(processList, this.stringManipInput.Text);
 
+            System.Windows.Clipboard.SetText(output);
+
             this.stringManipOutput.Text = output;
         }
 
@@ -197,6 +203,16 @@ namespace NipClip
             }
         }
 
+        private void saveStringTemplateClick(object sender, RoutedEventArgs e)
+        {
+            WindowManager.SaveStringTemplate(this.stringManipInput.Text);
+        }
+
+        private void deleteStringTemplateClick(object sender, RoutedEventArgs e)
+        {
+            WindowManager.DeleteStringTemplate(this.stringManipInput.Text);
+        }
+
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             if ((bool)this.disableOnDemandDecryption.IsChecked)
@@ -222,6 +238,21 @@ namespace NipClip
         private void createNewClipboardButton_Click(object sender, RoutedEventArgs e)
         {
             WindowManager.CreateNewClipboardMainWindow();
+        }
+
+        private void stringManipInput_GotFocus(object sender = null, RoutedEventArgs e = null)
+        {
+            if (WindowManager.applicationSettings.nipLangTemplates.Contains(this.stringManipInput.Text)) {
+                foreach (string item in stringManipTemplateSelection.Items)
+                {
+                    if (item == this.stringManipInput.Text)
+                    {
+                        this.stringManipTemplateSelection.Text = item;
+                        this.stringManipTemplateSelection.SelectedItem = item;
+                    }
+                }
+
+            }
         }
     }
 }

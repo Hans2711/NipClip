@@ -227,7 +227,7 @@ namespace NipClip.Classes.Keyboard
         /// Function that will be called when defined events occur
         /// </summary>
         /// <param name="key">VKeys</param>
-        public delegate void KeyboardHookCallback(VKeys key);
+        public delegate bool KeyboardHookCallback(VKeys key);
 
         #region Events
         public event KeyboardHookCallback KeyDown;
@@ -276,14 +276,39 @@ namespace NipClip.Classes.Keyboard
             {
                 int iwParam = wParam.ToInt32();
 
-                if ((iwParam == WM_KEYDOWN || iwParam == WM_SYSKEYDOWN))
+                // Check for Key Down or System Key Down
+                if (iwParam == WM_KEYDOWN || iwParam == WM_SYSKEYDOWN)
+                {
                     if (KeyDown != null)
-                        KeyDown((VKeys)Marshal.ReadInt32(lParam));
-                if ((iwParam == WM_KEYUP || iwParam == WM_SYSKEYUP))
+                    {
+                        VKeys key = (VKeys)Marshal.ReadInt32(lParam);
+                        bool status = KeyDown.Invoke(key);
+
+                        // If KeyDown event returns false, suppress the key
+                        if (!status)
+                        {
+                            return new IntPtr(1);
+                        }
+                    }
+                }
+                // Check for Key Up or System Key Up
+                else if (iwParam == WM_KEYUP || iwParam == WM_SYSKEYUP)
+                {
                     if (KeyUp != null)
-                        KeyUp((VKeys)Marshal.ReadInt32(lParam));
+                    {
+                        VKeys key = (VKeys)Marshal.ReadInt32(lParam);
+                        bool status = KeyUp.Invoke(key);
+
+                        // If KeyUp event returns false, suppress the key
+                        if (!status)
+                        {
+                            return new IntPtr(1);
+                        }
+                    }
+                }
             }
 
+            // Call the next hook in the chain
             return CallNextHookEx(hookID, nCode, wParam, lParam);
         }
 

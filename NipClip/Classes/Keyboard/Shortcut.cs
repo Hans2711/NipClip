@@ -13,9 +13,10 @@ namespace NipClip.Classes.Keyboard
 
         public virtual List<MainWindow> mainWindows { get; set; }
 
-        public virtual void Callback(List<KeyboardHook.VKeys> activationKeys)
+        public virtual bool Callback(List<KeyboardHook.VKeys> activationKeys)
         {
 
+            return true;
         }
     }
 }

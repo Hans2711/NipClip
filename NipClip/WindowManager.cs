@@ -59,6 +59,32 @@ namespace NipClip
             Environment.Exit(0);
         }
 
+        public static void SaveStringTemplate(string template)
+        {
+            applicationSettings.saveStringTemplate(template);
+
+            foreach (MainWindow window in clipboardMainWindows)
+            {
+                window.stringManipTemplateSelection.Items.Refresh();
+            }
+            applicationSettings.save();
+        }
+
+        public static void DeleteStringTemplate(string template)
+        {
+            applicationSettings.deleteStringTemplate(template);
+
+            foreach (MainWindow window in clipboardMainWindows)
+            {
+                window.stringManipTemplateSelection.Items.Refresh();
+                window.stringManipTemplateSelection.Text = string.Empty;
+                window.stringManipTemplateSelection.SelectedItem = string.Empty;
+                window.stringManipInput.Text = string.Empty;   
+            }
+            applicationSettings.save();
+        }
+
+
 
         public static void CreateNewClipboardMainWindow()
         {
@@ -92,6 +118,9 @@ namespace NipClip
                         }
                     }
                 }
+                
+                TransparentWindow transparentWindow = new TransparentWindow();
+                transparentWindow.Show();
             }
             else
             {
