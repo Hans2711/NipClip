@@ -106,6 +106,17 @@ namespace NipClip.Classes.Clipboard
             return parts;
         }
 
+        public virtual string urlContent { get; set; }
+
+        public virtual bool isUrl()
+        {
+            string content = ((string)Content).Trim();
+            Uri uriResult;
+            bool isUrl = Uri.TryCreate(content, UriKind.Absolute, out uriResult)
+                         && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+            return isUrl;
+        }
+
         public virtual void pasteToClipboard()
         {
             System.Windows.Clipboard.SetDataObject(this.Content);

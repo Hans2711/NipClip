@@ -41,6 +41,17 @@ namespace NipClip.Classes.Clipboard.DTO
                         }
                     }
                 }
+
+                if (entry.urlContent != null)
+                {
+                    foreach (var param in this.parameters)
+                    {
+                        if (entry.urlContent.ToLower().Contains(param.ToLower()))
+                        {
+                            weight += partialWeight - 0.1F;;
+                        }
+                    }
+                }
             }
             entry.sortWeight += weight;
             return weight;

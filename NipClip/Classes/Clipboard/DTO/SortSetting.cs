@@ -11,6 +11,7 @@ namespace NipClip.Classes.Clipboard.DTO
 
     [Serializable]
     [XmlInclude(typeof(KeywordSortSettings))]
+    [XmlInclude(typeof(UrlSortSettings))]
     public abstract class SortSetting
     {
         public virtual List<string> parameters { get; set; }

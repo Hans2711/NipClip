@@ -6,7 +6,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Security.Policy;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -45,6 +48,7 @@ namespace NipClip
             if (sortSettings.Count == 0)
             {
                 this.sortSettings.Add(new KeywordSortSettings());
+                this.sortSettings.Add(new UrlSortSettings());
             } 
             else
             {
@@ -58,6 +62,9 @@ namespace NipClip
             }
 
             this.resultsListBox.ItemsSource = this.clipboardEntries;
+
+            this.UrlPreFetchThread = new Thread(this.UrlPreFetcherWorker);
+            this.UrlPreFetchThread.Start();
         }
 
         private Dictionary<float, List<ClipboardEntry>> weightsHashmap = new Dictionary<float, List<ClipboardEntry>>();
@@ -122,6 +129,60 @@ namespace NipClip
             string export = XmlConverter.ConvertToXml<List<SortSetting>>(this.sortSettings);
             export = export.Replace("encoding=\"utf-16\"", "");
             File.WriteAllText("sort-settings.xml", export);
+        }
+
+        public static bool UrlFilter = false;
+        private void urlFilterButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SearchUtility.UrlFilter)
+            {
+                SearchUtility.UrlFilter = false;
+                this.urlFilterButton.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFDDDDDD");
+            }
+            else
+            {
+                SearchUtility.UrlFilter = true;
+                this.urlFilterButton.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#008000");
+            }
+            this.ProcessFilterChange();
+        }
+
+        private void Window_ContentRendered(object sender, EventArgs e)
+        {
+            this.ProcessFilterChange();
+        }
+
+        private bool UrlPreFetcherBreaker = true;
+        private Thread UrlPreFetchThread = null;
+        private void UrlPreFetcherWorker()
+        {
+            while (this.UrlPreFetcherBreaker)
+            {
+                foreach (var window in this.mainWindows)
+                {
+                    foreach (var entry in window.clipboardReader.clipboardStorage.entries)
+                    {
+                        if (entry.isUrl() && entry.urlContent == null )
+                        {
+                            try
+                            {
+                                HttpWebRequest request = (HttpWebRequest)WebRequest.Create((string)entry.Content);
+                                request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+                                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                                using (Stream stream = response.GetResponseStream())
+                                using (StreamReader reader = new StreamReader(stream))
+                                {
+                                    entry.urlContent = reader.ReadToEnd();
+                                }
+                            } catch (Exception ex) {}
+                        }
+                    }
+                }
+
+                Thread.Sleep(1200);
+            }
+
         }
     }
 }

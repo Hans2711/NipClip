@@ -9,6 +9,7 @@
 -- https://learn.microsoft.com/en-us/answers/questions/840881/how-to-get-selectedtext-from-other-applications
 
 - Sorter
+-- url prefetching
 
 - Image support
 
