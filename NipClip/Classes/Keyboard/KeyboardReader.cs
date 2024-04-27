@@ -34,6 +34,12 @@ namespace NipClip.Classes.Keyboard
             this.shortcuts.Add(new CopyShortcut());
         }
 
+        ~KeyboardReader()
+        {
+            this.shortcuts.Clear();
+            this.hook.Uninstall();
+        }
+
         public void fillNextInputToLeaderKey()
         {
             this.setNextLeaderKey = true;
@@ -47,7 +53,13 @@ namespace NipClip.Classes.Keyboard
                 {
                     if (keys.All(item => this.buffer.Contains(item)))
                     {
+                        foreach (KeyboardHook.VKeys key in this.buffer)
+                        {
+                            Console.WriteLine("[Buffer Key]: " + key.ToString());
+                        }
+
                         shortcut.mainWindows = this.mainWindows;
+                        this.buffer.Clear();
                         return shortcut.Callback(keys);
                     }
                 }
@@ -58,7 +70,7 @@ namespace NipClip.Classes.Keyboard
         private bool keyboardHook_KeyUp(KeyboardHook.VKeys key)
         {
             this.buffer.Remove(key);
-            Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] KeyUp Event {" + key.ToString() + "}");
+            //Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] KeyUp Event {" + key.ToString() + "}");
             return true;
         }
         private bool keyboardHook_KeyDown(KeyboardHook.VKeys key)
@@ -77,7 +89,7 @@ namespace NipClip.Classes.Keyboard
                     return false;
                 }
             }
-            Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] KeyDown Event {" + key.ToString() + "}");
+            //Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] KeyDown Event {" + key.ToString() + "}");
             return true;
         }
     }

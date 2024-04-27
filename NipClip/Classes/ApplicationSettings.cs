@@ -21,6 +21,8 @@ namespace NipClip.Classes
 
         public KeyboardHook.VKeys leaderKey { get; set; }
 
+        public bool ClipboardIDReverse = false;
+
         public ApplicationSettings() { }
 
 
@@ -57,6 +59,7 @@ namespace NipClip.Classes
                 this.nipLangTemplates = settings.nipLangTemplates;
                 this.leaderKey = settings.leaderKey;
                 this.DecryptionEnabled = settings.DecryptionEnabled;
+                this.ClipboardIDReverse = settings.ClipboardIDReverse;
 
                 if (this.nipLangTemplates.Count <= 0)
                 {

@@ -2,8 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Forms;
 
 namespace NipClip.Classes.Keyboard
 {
@@ -13,9 +18,12 @@ namespace NipClip.Classes.Keyboard
         {
             this.Keys = new List<List<KeyboardHook.VKeys>>();
 
-            this.Keys.Add(new List<KeyboardHook.VKeys>());
-            this.Keys.Last().Add(WindowManager.applicationSettings.leaderKey);
-            this.Keys.Last().Add(KeyboardHook.VKeys.KEY_C);
+            if (WindowManager.applicationSettings.leaderKey != KeyboardHook.VKeys.LCONTROL && WindowManager.applicationSettings.leaderKey != KeyboardHook.VKeys.RCONTROL)
+            {
+                this.Keys.Add(new List<KeyboardHook.VKeys>());
+                this.Keys.Last().Add(WindowManager.applicationSettings.leaderKey);
+                this.Keys.Last().Add(KeyboardHook.VKeys.KEY_C);
+            }
 
             this.Keys.Add(new List<KeyboardHook.VKeys>());
             this.Keys.Last().Add(WindowManager.applicationSettings.leaderKey);
@@ -67,7 +75,7 @@ namespace NipClip.Classes.Keyboard
 
         public override bool Callback(List<KeyboardHook.VKeys> activationKeys)
         {
-            int index = 1;
+            int index = 0;
             if (activationKeys.Contains(KeyboardHook.VKeys.KEY_1))
             {
                 index = 1;
@@ -107,7 +115,24 @@ namespace NipClip.Classes.Keyboard
 
             //KeyboardSender.SendCopyAction();
 
-            string content = System.Windows.Clipboard.GetText();
+            //string content = System.Windows.Clipboard.GetText();
+
+            string content = "";
+            if (this.isControlLeaderKey(ref activationKeys))
+            {
+                content = System.Windows.Clipboard.GetText();
+            }
+            else
+            {
+                content = ClipboardUtility.GetHighlightedTextFromForegroundWindow();
+            }
+
+            if (content == "")
+            {
+                return false;
+            }
+
+            //Option Leader Key
             StringClipboardEntry entry = new StringClipboardEntry();
             entry.Content = content;    
 
@@ -115,7 +140,16 @@ namespace NipClip.Classes.Keyboard
             {
                 if (mainWindow.clipboardID == index)
                 {
+                    if (this.isControlLeaderKey(ref activationKeys) && index > 0)
+                    {
+                        if (mainWindows[0].clipboardReader.clipboardStorage.entries.First().Content.Equals(entry.Content))
+                        {
+                            mainWindows[0].clipboardReader.clipboardStorage.entries.Remove(mainWindows[0].clipboardReader.clipboardStorage.entries.First());
+                            mainWindows[0].clipboardReader.clipboardStorage.entries[0].pasteToClipboard();
+                        }
+                    }
                     mainWindow.clipboardReader.clipboardStorage.CheckPossibleNewEntry(entry);
+                    break;
                 }
             }
 

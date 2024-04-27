@@ -99,6 +99,21 @@ namespace NipClip
             applicationSettings.save();
         }
 
+        static SearchUtility searchUtility = null;
+
+        public static void OpenSearchUtility()
+        {
+            if (searchUtility == null)
+            {
+                searchUtility = new SearchUtility(ref clipboardMainWindows);
+                searchUtility.Show();
+            } 
+            else
+            {
+                searchUtility.Show();
+            }
+        }
+
         public static void CreateNewClipboardMainWindow()
         {
             if (clipboardMainWindows.Count <= 0)
@@ -137,9 +152,55 @@ namespace NipClip
             }
             else
             {
-                MainWindow mainWindow = new MainWindow(WindowManager.clipboardMainWindows.Last().clipboardID + 1);
-                mainWindow.Show();
-                WindowManager.clipboardMainWindows.Add(mainWindow);
+                int biggestIndex = 0;
+                int smallestIndex = int.MaxValue;
+
+                foreach (MainWindow window in clipboardMainWindows)
+                {
+                    if (window.clipboardID != 0)
+                    {
+                        if (biggestIndex < window.clipboardID)
+                        {
+                            biggestIndex = window.clipboardID;
+                        }
+
+                        if (smallestIndex > window.clipboardID)
+                        {
+                            smallestIndex = window.clipboardID;
+                        }
+                    }
+                }
+
+                int newIndex = 0;
+
+                if (applicationSettings.ClipboardIDReverse)
+                {
+                    for (int i = 9; i >= 1; i--)
+                    {
+                        if (!clipboardMainWindows.Any(window => window.clipboardID == i))
+                        {
+                            newIndex = i;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 1; i <= 9; i++)
+                    {
+                        if (!clipboardMainWindows.Any(window => window.clipboardID == i))
+                        {
+                            newIndex = i;
+                            break;
+                        }
+                    }
+                }
+                if (newIndex > 0)
+                {
+                    MainWindow mainWindow = new MainWindow(newIndex);
+                    mainWindow.Show();
+                    WindowManager.clipboardMainWindows.Add(mainWindow);
+                }
             }
         }
     }

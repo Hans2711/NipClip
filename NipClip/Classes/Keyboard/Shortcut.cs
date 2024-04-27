@@ -13,6 +13,18 @@ namespace NipClip.Classes.Keyboard
 
         public virtual List<MainWindow> mainWindows { get; set; }
 
+        public virtual bool isControlLeaderKey(ref List<KeyboardHook.VKeys> keys)
+        {
+            foreach (KeyboardHook.VKeys key in keys)
+            {
+                if (key.Equals(WindowManager.applicationSettings.leaderKey))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public virtual bool Callback(List<KeyboardHook.VKeys> activationKeys)
         {
 

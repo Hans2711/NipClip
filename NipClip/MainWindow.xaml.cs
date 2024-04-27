@@ -65,7 +65,7 @@ namespace NipClip
             }
             this.textList.ItemsSource = clipboardReader.clipboardStorage.entries;
 
-            this.DataContext = clipboardReader.clipboardStorage.entries;
+            this.DataContext = this;
 
             this.stringManipTemplateSelection.ItemsSource = WindowManager.applicationSettings.nipLangTemplates;
 
@@ -244,6 +244,8 @@ namespace NipClip
                         this.changeCurrentLeaderButton.Content = "Change";
                     }
                 }
+
+                this.clipboardIDReverse.IsChecked = WindowManager.applicationSettings.ClipboardIDReverse;
             } catch { }
         }
 
@@ -275,6 +277,30 @@ namespace NipClip
         {
             this.changeCurrentLeaderButton.Content = "Waiting for input";
             WindowManager.ChangeKeyboardLeader();
+        }
+
+        private void clipboardIDReverse_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.clipboardIDReverse.IsChecked == true)
+            {
+                WindowManager.applicationSettings.ClipboardIDReverse = true;
+                WindowManager.RefreshAll();
+            }
+            else
+            {
+                WindowManager.applicationSettings.ClipboardIDReverse = false;
+                WindowManager.RefreshAll();
+            }
+        }
+
+        private void generateKey_Click(object sender, RoutedEventArgs e)
+        {
+            this.encryptionKey.Text = RandomUtility.RandomString(10);
+        }
+
+        private void openSearchUtil_Click(object sender, RoutedEventArgs e)
+        {
+            WindowManager.OpenSearchUtility();
         }
     }
 }

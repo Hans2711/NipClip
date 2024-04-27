@@ -18,17 +18,13 @@ namespace NipClip.Classes.Clipboard
     {
 
         public BindingList<ClipboardEntry> entries = new BindingList<ClipboardEntry>();
-        public BindingList<ClipboardEntry> sortedEntries = new BindingList<ClipboardEntry>();
         public List<ClipboardEntry> nEntries = new List<ClipboardEntry>();
-        public EntrySorter entrySorter;
         
         Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
 
         public static ClipboardEntry ignoreElement;
 
-        public ClipboardStorage() {
-            entrySorter = new EntrySorter(ref this.sortedEntries, ref this.entries);
-        }
+        public ClipboardStorage() { }
 
         public void CheckPossibleNewEntry(StringClipboardEntry entry)
         {
