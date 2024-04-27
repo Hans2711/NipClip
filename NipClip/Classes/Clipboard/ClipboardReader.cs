@@ -13,6 +13,7 @@ using System.Threading;
 using System.Xml.Serialization;
 using System.Security.Policy;
 using System.Windows.Threading;
+using NipClip.Classes.Keyboard;
 
 namespace NipClip.Classes.Clipboard
 {
@@ -107,6 +108,11 @@ namespace NipClip.Classes.Clipboard
 
                     this.clipboardStorage.CheckPossibleNewEntry(entry);
 
+                    ImageClipboardEntry imageClipboardEntry = new ImageClipboardEntry();
+                    imageClipboardEntry.Content = System.Windows.Clipboard.GetImage();
+
+                    //this.clipboardStorage.CheckPossibleNewEntry(imageClipboardEntry);
+
                     foreach (ClipboardEntry entryy in this.clipboardStorage.entries)
                     {
                         if (entryy.toBeDeleted)
@@ -118,7 +124,7 @@ namespace NipClip.Classes.Clipboard
                         }
                     }
                 } catch (Exception ex) { }
-                Thread.Sleep(980);
+                Thread.Sleep(880);
             }
         }
 

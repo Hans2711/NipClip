@@ -18,7 +18,10 @@
         <ListBox SelectionMode="Extended" Grid.Column="0" x:Name="textList" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="False">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Content}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="3" Text="{Binding Content}"/>
+                        <Image Margin="3" Source="{Binding Image}"/>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -19,6 +20,8 @@ namespace NipClip.Classes.Clipboard
         public virtual string type { get ; set; }
 
         public virtual DateTime crDate { get; set; }
+
+        public virtual Image Image { get; set; }
 
         [XmlIgnore]
         public virtual bool toBeDeleted { get; set; }
@@ -61,8 +64,11 @@ namespace NipClip.Classes.Clipboard
 
             string response = string.Empty;
 
-            for (int i = 0; i < bytes.Length; i++)
-                response += (char)(bytes[i] + (i % 29));  // Using the index 'i' instead of the byte value
+            if (bytes != null)
+            {
+                for (int i = 0; i < bytes.Length; i++)
+                    response += (char)(bytes[i] + (i % 29));  // Using the index 'i' instead of the byte value
+            }
 
             return response;
         }

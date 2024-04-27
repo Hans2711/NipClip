@@ -30,7 +30,7 @@ namespace NipClip.Classes.Clipboard
             entrySorter = new EntrySorter(ref this.sortedEntries, ref this.entries);
         }
 
-        public void CheckPossibleNewEntry(StringClipboardEntry entry)
+        public void CheckPossibleNewEntry(ClipboardEntry entry)
         {
             if (entry == null || entry.Content == null)
             {
