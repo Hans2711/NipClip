@@ -81,12 +81,12 @@ namespace NipClip.Classes.Clipboard
                     this.CheckPossibleNewEntry(stringClipboardEntry);
                 }
 
-                if (entries.Count == 0)
-                {
-                    StringClipboardEntry stringClipboardEntry = new StringClipboardEntry();
-                    stringClipboardEntry.Content = System.Windows.Clipboard.GetText();
-                    this.CheckPossibleNewEntry(stringClipboardEntry);
-                }
+                //if (entries.Count == 0)
+                //{
+                //    StringClipboardEntry stringClipboardEntry = new StringClipboardEntry();
+                //    stringClipboardEntry.Content = System.Windows.Clipboard.GetText();
+                //    this.CheckPossibleNewEntry(stringClipboardEntry);
+                //}
 
                 Console.WriteLine(System.Windows.Clipboard.GetText());
             }

@@ -65,9 +65,8 @@ namespace NipClip.Classes.Keyboard
         {
             if (this.setNextLeaderKey)
             {
-                WindowManager.applicationSettings.leaderKey = key;
-                WindowManager.applicationSettings.save();
-                WindowManager.RefreshAll();
+                WindowManager.ChangeKeyboardLeader(key);
+                this.setNextLeaderKey = false;
             }
 
             if (!this.buffer.Contains(key)) 

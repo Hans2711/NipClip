@@ -15,7 +15,7 @@
             <RowDefinition Height="2*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <ListBox SelectionMode="Extended" Grid.Column="0" x:Name="textList" ItemsSource="{Binding}">
+        <ListBox SelectionMode="Extended" Grid.Column="0" x:Name="textList" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="False">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Content}"/>

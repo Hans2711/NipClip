@@ -41,6 +41,15 @@ namespace NipClip
             RefreshAll();
         }
 
+        public static void ChangeKeyboardLeader(KeyboardHook.VKeys key)
+        {
+            WindowManager.applicationSettings.leaderKey = key;
+            WindowManager.applicationSettings.save();
+            WindowManager.RefreshAll();
+
+            keyboardReader = null;
+            keyboardReader = new KeyboardReader(ref clipboardMainWindows);
+        }
         public static void ChangeKeyboardLeader()
         {
             keyboardReader.fillNextInputToLeaderKey();
@@ -52,6 +61,7 @@ namespace NipClip
             {
                 window.clipboardReader.export();
             }
+            applicationSettings.save();
             Environment.Exit(0);
         }
 
@@ -88,8 +98,6 @@ namespace NipClip
             }
             applicationSettings.save();
         }
-
-
 
         public static void CreateNewClipboardMainWindow()
         {

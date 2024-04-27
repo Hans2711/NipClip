@@ -117,6 +117,7 @@ namespace NipClip
         public void close(Object sender, System.EventArgs e)
         {
             this.clipboardReader.export();
+            WindowManager.applicationSettings.save();
             this.Close();
         }
 
@@ -190,7 +191,6 @@ namespace NipClip
                 {
                     WindowManager.RencryptAll(this.encryptionKey.Text);
                     WindowManager.applicationSettings.EncryptionKey = this.encryptionKey.Text;
-                    ClipboardReader.encryptionKey = WindowManager.applicationSettings.EncryptionKey;
 
                     this.clipboardReader.export();
                     this.reencryptButton.Content = "Done";
@@ -220,10 +220,10 @@ namespace NipClip
         {
             if ((bool)this.disableOnDemandDecryption.IsChecked)
             {
-                ClipboardReader.encryptionEnabled = false;
+                WindowManager.applicationSettings.DecryptionEnabled = false;
             } else
             {
-                ClipboardReader.encryptionEnabled = true;
+                WindowManager.applicationSettings.DecryptionEnabled = true;
             }
             
             WindowManager.RefreshAll();
@@ -235,7 +235,15 @@ namespace NipClip
             {
                 this.sortingDataGrid.Items.Refresh();
                 this.textList.Items.Refresh();
-                this.currentLeader.SelectedItem = WindowManager.applicationSettings.leaderKey;
+
+                if (this.currentLeader.SelectedItem != null && WindowManager.applicationSettings.leaderKey != null)
+                {
+                    if ((KeyboardHook.VKeys)this.currentLeader.SelectedItem != WindowManager.applicationSettings.leaderKey)
+                    {
+                        this.currentLeader.SelectedItem = WindowManager.applicationSettings.leaderKey;
+                        this.changeCurrentLeaderButton.Content = "Change";
+                    }
+                }
             } catch { }
         }
 
@@ -255,21 +263,18 @@ namespace NipClip
                         this.stringManipTemplateSelection.SelectedItem = item;
                     }
                 }
-
             }
         }
 
         private void currentLeader_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            WindowManager.applicationSettings.leaderKey = (KeyboardHook.VKeys)this.currentLeader.SelectedItem;
-            WindowManager.applicationSettings.save();
+            WindowManager.ChangeKeyboardLeader((KeyboardHook.VKeys)this.currentLeader.SelectedItem);
         }
 
         private void changeCurrentLeaderButton_Click(object sender, RoutedEventArgs e)
         {
             this.changeCurrentLeaderButton.Content = "Waiting for input";
             WindowManager.ChangeKeyboardLeader();
-            this.changeCurrentLeaderButton.Content = "Change";
         }
     }
 }

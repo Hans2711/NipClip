@@ -23,9 +23,9 @@ namespace NipClip.Classes.Clipboard
         {
             get
             {
-                if (ClipboardReader.encryptionEnabled)
+                if (WindowManager.applicationSettings.DecryptionEnabled)
                 {
-                    return DecryptString(ClipboardReader.encryptionKey);
+                    return DecryptString(WindowManager.applicationSettings.EncryptionKey);
                 }
                 else
                 {
@@ -34,7 +34,7 @@ namespace NipClip.Classes.Clipboard
             }
             set
             {
-                Encrypt(ClipboardReader.encryptionKey, (string)value);
+                Encrypt(WindowManager.applicationSettings.EncryptionKey, (string)value);
                 NotifyPropertyChanged();
             }
         }

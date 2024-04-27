@@ -15,6 +15,7 @@ namespace NipClip.Classes
     public class ApplicationSettings
     {
         public string EncryptionKey { set; get; }
+        public bool DecryptionEnabled { set; get; }
 
         public List<string> nipLangTemplates = new List<string>();
 
@@ -55,6 +56,7 @@ namespace NipClip.Classes
                 this.EncryptionKey = settings.EncryptionKey;
                 this.nipLangTemplates = settings.nipLangTemplates;
                 this.leaderKey = settings.leaderKey;
+                this.DecryptionEnabled = settings.DecryptionEnabled;
 
                 if (this.nipLangTemplates.Count <= 0)
                 {
@@ -66,6 +68,7 @@ namespace NipClip.Classes
                 if (string.IsNullOrEmpty(this.EncryptionKey))
                 {
                     this.EncryptionKey = "DefaultKey";
+                    this.DecryptionEnabled = true;
                 }
             }
         }

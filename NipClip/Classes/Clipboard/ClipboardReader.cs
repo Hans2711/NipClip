@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Xml.Serialization;
 using System.Security.Policy;
+using System.Windows.Threading;
 
 namespace NipClip.Classes.Clipboard
 {
@@ -36,6 +37,8 @@ namespace NipClip.Classes.Clipboard
         public bool nonNativeClipboard = false;
 
         public ClipboardReaderSettings settings {  get; set; }
+
+        public Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
 
         public ClipboardReader(MainWindow window, string filename = null)
         {
@@ -103,6 +106,17 @@ namespace NipClip.Classes.Clipboard
                     entry.Content = System.Windows.Clipboard.GetText();
 
                     this.clipboardStorage.CheckPossibleNewEntry(entry);
+
+                    foreach (ClipboardEntry entryy in this.clipboardStorage.entries)
+                    {
+                        if (entryy.toBeDeleted)
+                        {
+                            this.dispatcher.Invoke(() =>
+                            {
+                                this.clipboardStorage.entries.Remove(entryy);
+                            });
+                        }
+                    }
                 } catch (Exception ex) { }
                 Thread.Sleep(980);
             }

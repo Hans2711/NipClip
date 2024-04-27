@@ -20,6 +20,9 @@ namespace NipClip.Classes.Clipboard
 
         public virtual DateTime crDate { get; set; }
 
+        [XmlIgnore]
+        public virtual bool toBeDeleted { get; set; }
+
         public virtual string? ToString()
         {
             return (string)Content;
@@ -28,13 +31,15 @@ namespace NipClip.Classes.Clipboard
         public ClipboardEntry()
         {
             crDate = DateTime.Now;
+            toBeDeleted = false;
         }
 
         [XmlIgnore]
         public virtual object Content { 
             get {
-                if (ClipboardReader.encryptionEnabled) {
-                    return DecryptString(ClipboardReader.encryptionKey);
+                if (WindowManager.applicationSettings.DecryptionEnabled) 
+                {
+                    return DecryptString(WindowManager.applicationSettings.EncryptionKey);
                 } else
                 {
                     return ByteToString(EncryptedContent);
@@ -42,13 +47,18 @@ namespace NipClip.Classes.Clipboard
             }
             set
             {
-                Encrypt(ClipboardReader.encryptionKey, (string)value);
+                Encrypt(WindowManager.applicationSettings.EncryptionKey, (string)value);
                 NotifyPropertyChanged();
             }
         }
 
-        protected string ByteToString(byte[] bytes)
+        protected string ByteToString(byte[] bytes, bool isFallback = false)
         {
+            if (isFallback)
+            {
+                this.toBeDeleted = true;
+            }
+
             string response = string.Empty;
 
             for (int i = 0; i < bytes.Length; i++)
@@ -147,12 +157,18 @@ namespace NipClip.Classes.Clipboard
                     EncryptedContent = msEncrypt.ToArray();
                 }
             }
+
+            if (EncryptedContent == null || EncryptedContent.Length == 0)
+                EncryptedContent = new byte[] { 0 };
         }
 
         public virtual string DecryptString(string key)
         {
             if (EncryptedContent == null || EncryptedContent.Length == 0)
-                return "";
+                return ByteToString(EncryptedContent, true);
+
+            if (string.IsNullOrEmpty(key))
+                return ByteToString(EncryptedContent, true);
         
             using (Aes aesAlg = Aes.Create())
             {
@@ -175,14 +191,22 @@ namespace NipClip.Classes.Clipboard
                 {
                     using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                     {
-                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        try
                         {
-                            // Read the decrypted bytes from the decrypting stream and return as string
-                            return srDecrypt.ReadToEnd();
+                            using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                            {
+                                // Read the decrypted bytes from the decrypting stream and return as string
+                                return srDecrypt.ReadToEnd();
+                            }
+                        }
+                        catch (Exception ex) {
+                            this.toBeDeleted = true;
                         }
                     }
                 }
             }
+
+            return ByteToString(EncryptedContent, true);
         }
     }
 }
