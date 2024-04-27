@@ -23,6 +23,29 @@ namespace NipClip.Classes.Clipboard
         [XmlIgnore]
         public virtual bool toBeDeleted { get; set; }
 
+        [XmlIgnore]
+        public virtual float sortWeight { get; set; }
+
+        public virtual string SortWeight
+        {
+            get
+            {
+                return this.sortWeight.ToString();
+            }
+            set
+            {
+                if (float.TryParse(value, out float floatValue))
+                {
+                    this.sortWeight = floatValue;
+                }
+                else
+                {
+                    // Handle the case where the string cannot be parsed into a float
+                    // You might throw an exception or handle it differently based on your requirements
+                }
+            }
+        }
+
         public virtual string? ToString()
         {
             return (string)Content;

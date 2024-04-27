@@ -48,6 +48,34 @@ namespace NipClip.Classes.Clipboard
             }
         }
 
+        public static void PasteTextAndRemoveDefaultText(int prefLength, ClipboardEntry entry)
+        {
+            for (int i = 0; i < prefLength; i++)
+            {
+                keybd_event(VK_BACKSPACE, 0, KEYEVENTF_KEYDOWN, 0); 
+                keybd_event(VK_BACKSPACE, 0, KEYEVENTF_KEYUP, 0);
+            }
+
+            ClipboardStorage.ignoreElement = entry;
+            entry.pasteToClipboard();
+
+            keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYDOWN, 0);
+            keybd_event(VK_V, 0, KEYEVENTF_KEYDOWN, 0);
+            keybd_event(VK_V, 0, KEYEVENTF_KEYUP, 0);
+            keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
+        }
+
+        public static void PasteText(ClipboardEntry entry)
+        {
+            ClipboardStorage.ignoreElement = entry;
+            entry.pasteToClipboard();
+
+            keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYDOWN, 0);
+            keybd_event(VK_V, 0, KEYEVENTF_KEYDOWN, 0);
+            keybd_event(VK_V, 0, KEYEVENTF_KEYUP, 0);
+            keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
+        }
+
         private static bool WaitForClipboardText(int timeoutMillis)
         {
             int waited = 0;
@@ -91,6 +119,8 @@ namespace NipClip.Classes.Clipboard
 
         const byte VK_CONTROL = 0x11;
         const byte VK_C = 0x43;
+        const byte VK_V = 0x56;
+        const byte VK_BACKSPACE = 0x08;
         const uint KEYEVENTF_KEYUP = 0x0002;
         const uint KEYEVENTF_KEYDOWN = 0x0000;
 

@@ -13,21 +13,37 @@ namespace NipClip.Classes.Clipboard.DTO
             this.parameters = new List<string>();
         }
 
-        public override bool validateEntry(ClipboardEntry entry)
+        public float partialWeight = 0.5F;
+        public float completeWeight = 1F;
+        public float caseSensitiveCompleteWeight = 1.2F;
+
+        public override float validateEntry(ClipboardEntry entry)
         {
+            float weight = 0;
             if (entry.Content is string content)
             {
                 string[] words = content.Split(" ");
-                // Check for any word that contains any part of any parameter
                 foreach (string word in words)
                 {
-                    if (this.parameters.Any(param => word.Contains(param.ToLower().Trim())))
+                    foreach (var param in this.parameters)
                     {
-                        return true;
+                        if (word.ToLower().Trim().Contains(param.ToLower().Trim()))
+                        {
+                            weight += partialWeight;
+                        }
+                        if (word.ToLower().Trim().Equals(param.ToLower().Trim()))
+                        {
+                            weight += completeWeight;
+                        }
+                        if (word.Trim().Equals(param.ToLower().Trim()))
+                        {
+                            weight += caseSensitiveCompleteWeight;
+                        }
                     }
                 }
             }
-            return false;
-        }
+            entry.sortWeight += weight;
+            return weight;
+       }
     }
 }

@@ -60,41 +60,47 @@ namespace NipClip
             this.resultsListBox.ItemsSource = this.clipboardEntries;
         }
 
+        private Dictionary<float, List<ClipboardEntry>> weightsHashmap = new Dictionary<float, List<ClipboardEntry>>();
+
         private void ProcessFilterChange()
         {
             foreach (var window in this.mainWindows)
             {
                 foreach (var entry in window.clipboardReader.clipboardStorage.entries)
                 {
-                    bool found = false;
+                    entry.sortWeight = 0;
                     foreach (var setting in this.sortSettings)
                     {
-                        if (setting.validateEntry(entry))
-                        {
-                            found = true;
-                            if (!this.clipboardEntries.Contains(entry))
-                            {
-                                this.clipboardEntries.Add(entry);
-                                break;
-                            }
-                        }
+                        float weight = setting.validateEntry(entry);
                     }
-                    if (!found && this.clipboardEntries.Contains(entry))
+
+                    if (entry.sortWeight > 0)
                     {
-                        this.clipboardEntries.Remove(entry);
+                        if (this.weightsHashmap.ContainsKey(entry.sortWeight))
+                        {
+                            this.weightsHashmap[entry.sortWeight].Add(entry);
+                        }
+                        else
+                        {
+                            this.weightsHashmap.Add(entry.sortWeight, new List<ClipboardEntry>());
+                            this.weightsHashmap[entry.sortWeight].Add(entry);
+                        }
                     }
                 }
             }
 
-
-            var sortedEntries = this.clipboardEntries.OrderBy(e => e.crDate).ToList();
+            var sortedDict = this.weightsHashmap.OrderByDescending(pair => pair.Key)
+                                                    .ToDictionary(pair => pair.Key, pair => pair.Value.OrderByDescending(e => e.crDate).ToList());
 
             this.clipboardEntries.Clear();
-            foreach (var entry in sortedEntries)
+            foreach (var pair in sortedDict)
             {
-                this.clipboardEntries.Add(entry);
+                foreach (var entry in pair.Value)
+                {
+                    this.clipboardEntries.Add(entry);
+                }
             }
-
+            this.weightsHashmap.Clear();
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -104,7 +110,7 @@ namespace NipClip
                 if (setting.GetType().Equals(typeof(KeywordSortSettings)))
                 {
                     setting.parameters.Clear();
-                    setting.parameters = new List<string>(this.keywordTextbox.Text.ToLower().Split(' '));
+                    setting.parameters = new List<string>(this.keywordTextbox.Text.Split(' '));
                 }
             }
 

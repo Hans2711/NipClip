@@ -17,9 +17,9 @@ namespace NipClip.Classes.Clipboard.DTO
 
         public virtual string type { get; set; }
 
-        public virtual bool validateEntry(ClipboardEntry entry)
+        public virtual float validateEntry(ClipboardEntry entry)
         {
-            return false;
+            return 0;
         }
 
         public SortSetting()
