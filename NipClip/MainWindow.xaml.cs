@@ -184,17 +184,17 @@ namespace NipClip
 
         private void reencryptButton_Click_1(object sender, RoutedEventArgs e)
         {
-            this.reencryptButton.Content = "Reencrypt";
+            this.reencryptButton.Content = Properties.Resources.reencrypt;
 
             if (!string.IsNullOrEmpty(this.encryptionKey.Text))
             {
-                if (this.reencryptButton.Content != "Done")
+                if (this.reencryptButton.Content != Properties.Resources.done)
                 {
                     WindowManager.RencryptAll(this.encryptionKey.Text);
                     WindowManager.applicationSettings.EncryptionKey = this.encryptionKey.Text;
 
                     this.clipboardReader.export();
-                    this.reencryptButton.Content = "Done";
+                    this.reencryptButton.Content = Properties.Resources.done;
                     this.Refresh();
                 } else
                 {
@@ -295,7 +295,7 @@ namespace NipClip
 
         private void generateKey_Click(object sender, RoutedEventArgs e)
         {
-            this.encryptionKey.Text = RandomUtility.RandomString(10);
+            this.encryptionKey.Text = RandomUtility.RandomString(25);
         }
 
         private void openSearchUtil_Click(object sender, RoutedEventArgs e)

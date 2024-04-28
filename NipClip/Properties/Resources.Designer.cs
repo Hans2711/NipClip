@@ -106,6 +106,15 @@ namespace NipClip.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Done.
+        /// </summary>
+        public static string done {
+            get {
+                return ResourceManager.GetString("done", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Encryption.
         /// </summary>
         public static string encryption {

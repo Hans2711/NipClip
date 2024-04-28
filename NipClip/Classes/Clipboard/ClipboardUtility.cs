@@ -50,6 +50,8 @@ namespace NipClip.Classes.Clipboard
 
         public static void PasteTextAndRemoveDefaultText(int prefLength, ClipboardEntry entry)
         {
+            keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
+
             for (int i = 0; i < prefLength; i++)
             {
                 keybd_event(VK_BACKSPACE, 0, KEYEVENTF_KEYDOWN, 0); 

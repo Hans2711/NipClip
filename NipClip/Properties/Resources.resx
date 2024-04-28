@@ -132,6 +132,9 @@
   <data name="disableOnDemandDecrpytion" xml:space="preserve">
     <value>Disable On-Demand Decryption</value>
   </data>
+  <data name="done" xml:space="preserve">
+    <value>Done</value>
+  </data>
   <data name="encryption" xml:space="preserve">
     <value>Encryption</value>
   </data>

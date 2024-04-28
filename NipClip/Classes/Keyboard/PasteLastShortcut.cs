@@ -116,7 +116,7 @@ namespace NipClip.Classes.Keyboard
                 {
                     if (this.isControlLeaderKey(ref activationKeys) && index > 0)
                     {
-                        ClipboardUtility.PasteTextAndRemoveDefaultText(mainWindow.clipboardReader.clipboardStorage.entries.First().Content.ToString().Length, mainWindow.clipboardReader.clipboardStorage.entries.First());
+                        ClipboardUtility.PasteTextAndRemoveDefaultText(mainWindows[0].clipboardReader.clipboardStorage.entries.First().Content.ToString().Length, mainWindow.clipboardReader.clipboardStorage.entries.First());
                     } 
                     else
                     {
