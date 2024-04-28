@@ -67,6 +67,35 @@ namespace NipClip
             this.UrlPreFetchThread.Start();
         }
 
+        public static readonly DependencyProperty MinDateProperty = DependencyProperty.Register("Min", typeof(double), typeof(MainWindow), new PropertyMetadata(0d));
+        public static readonly DependencyProperty MaxDateProperty = DependencyProperty.Register("Max", typeof(double), typeof(MainWindow), new PropertyMetadata(100d));
+        public static readonly DependencyProperty StartDateProperty = DependencyProperty.Register("Start", typeof(double), typeof(MainWindow), new PropertyMetadata(20d));
+        public static readonly DependencyProperty EndDateProperty = DependencyProperty.Register("End", typeof(double), typeof(MainWindow), new PropertyMetadata(85d));
+
+        public double MaxDate
+        {
+            get => (double)GetValue(MaxDateProperty);
+            set => SetValue(MaxDateProperty, value);
+        }
+
+        public double MinDate
+        {
+            get => (double)GetValue(MinDateProperty);
+            set => SetValue(MinDateProperty, value);
+        }
+
+        public double StartDate
+        {
+            get => (double)GetValue(StartDateProperty);
+            set => SetValue(StartDateProperty, value);
+        }
+
+        public double EndDate
+        {
+            get => (double)GetValue(EndDateProperty);
+            set => SetValue(EndDateProperty, value);
+        }
+
         private Dictionary<float, List<ClipboardEntry>> weightsHashmap = new Dictionary<float, List<ClipboardEntry>>();
 
         private void ProcessFilterChange()

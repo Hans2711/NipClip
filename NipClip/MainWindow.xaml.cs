@@ -44,7 +44,7 @@ namespace NipClip
 
             this.Title = "NipClip | Windows Default";
         }
-        
+
         public MainWindow(int clipboardID)
         {
             InitializeComponent();
@@ -68,10 +68,9 @@ namespace NipClip
             this.DataContext = this;
 
             this.stringManipTemplateSelection.ItemsSource = WindowManager.applicationSettings.nipLangTemplates;
+            this.languagesSelection.ItemsSource = WindowManager.applicationSettings.languages;
 
             ClipboardReader.encryptionKey = WindowManager.applicationSettings.EncryptionKey;
-
-            this.sortingDataGrid.ItemsSource = this.clipboardReader.clipboardStorage.entries;
 
             this.notifyIcon = new Forms.NotifyIcon();
             this.notifyIcon.Icon = new System.Drawing.Icon("logo-black.ico");
@@ -96,6 +95,8 @@ namespace NipClip
 
             this.currentLeader.ItemsSource = Enum.GetValues(typeof(KeyboardHook.VKeys));
             this.currentLeader.SelectedItem = WindowManager.applicationSettings.leaderKey;
+
+            this.languagesSelection.SelectedItem = WindowManager.applicationSettings.selectedLanguage;
         }
 
         public void copyLastItem(Object sender, System.EventArgs e)
@@ -233,7 +234,6 @@ namespace NipClip
         {
             try
             {
-                this.sortingDataGrid.Items.Refresh();
                 this.textList.Items.Refresh();
 
                 if (this.currentLeader.SelectedItem != null && WindowManager.applicationSettings.leaderKey != null)
@@ -301,6 +301,21 @@ namespace NipClip
         private void openSearchUtil_Click(object sender, RoutedEventArgs e)
         {
             WindowManager.OpenSearchUtility();
+        }
+
+        private void languagesSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (WindowManager.applicationSettings.languages.Contains(this.languagesSelection.SelectedItem))
+            {
+                if ((string)this.languagesSelection.SelectedItem != WindowManager.applicationSettings.selectedLanguage)
+                {
+                    WindowManager.applicationSettings.selectedLanguage = (string)this.languagesSelection.SelectedItem;
+                    WindowManager.CloseAll(false);
+                    WindowManager.clipboardMainWindows.Clear();
+                    WindowManager.CreateNewClipboardMainWindow();
+                    WindowManager.applicationSettings.setCurrentLanguage();
+                }
+            }
         }
     }
 }

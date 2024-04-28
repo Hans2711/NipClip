@@ -23,6 +23,10 @@ namespace NipClip.Classes
 
         public bool ClipboardIDReverse = false;
 
+        public List<string> languages = new List<string>();
+
+        public string selectedLanguage { get; set; }
+
         public ApplicationSettings() { }
 
 
@@ -32,7 +36,6 @@ namespace NipClip.Classes
             {
                 this.nipLangTemplates.Add(template);
             }
-
         }
 
         public void deleteStringTemplate(string template)
@@ -41,6 +44,11 @@ namespace NipClip.Classes
             {
                 this.nipLangTemplates.Remove(template);
             }
+        }
+
+        public void setCurrentLanguage()
+        {
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(this.selectedLanguage);
         }
 
         public void save()
@@ -60,13 +68,32 @@ namespace NipClip.Classes
                 this.leaderKey = settings.leaderKey;
                 this.DecryptionEnabled = settings.DecryptionEnabled;
                 this.ClipboardIDReverse = settings.ClipboardIDReverse;
+                this.languages = settings.languages;
+                this.selectedLanguage = settings.selectedLanguage;
 
                 if (this.nipLangTemplates.Count <= 0)
                 {
                     this.nipLangTemplates.Add("var_dump($N0, $N1)");
                     this.nipLangTemplates.Add("[$N0,$N1]");
+                    this.nipLangTemplates.Add("$N0,\n$N1");
                     this.nipLangTemplates.Add("@import \"$N\"\\n");
+                    this.nipLangTemplates.Add("using $N\n");
                 }
+
+                if (this.languages.Count <= 0)
+                {
+                    this.languages.Add("en");
+                    this.languages.Add("de");
+                    this.languages.Add("es");
+                }
+
+
+                if (string.IsNullOrEmpty(this.selectedLanguage))
+                {
+                    this.selectedLanguage = "en";
+                }
+
+                this.setCurrentLanguage();
 
                 if (string.IsNullOrEmpty(this.EncryptionKey))
                 {

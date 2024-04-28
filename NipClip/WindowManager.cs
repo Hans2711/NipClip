@@ -55,14 +55,24 @@ namespace NipClip
             keyboardReader.fillNextInputToLeaderKey();
         }
 
-        public static void CloseAll()
+        public static void CloseAll(bool exit = true)
         {
             foreach (MainWindow window in clipboardMainWindows)
             {
                 window.clipboardReader.export();
             }
             applicationSettings.save();
-            Environment.Exit(0);
+            if (exit)
+            {
+                Environment.Exit(0);
+            }
+            else
+            {
+                foreach (MainWindow window in clipboardMainWindows)
+                {
+                    window.Close();
+                }
+            }
         }
 
         public static void KillAll()
