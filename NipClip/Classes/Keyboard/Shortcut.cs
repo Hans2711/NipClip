@@ -25,6 +25,27 @@ namespace NipClip.Classes.Keyboard
             return false;
         }
 
+        public virtual MainWindow getMainWindowByIndex(int index)
+        {
+            MainWindow mainWindow = null;
+            foreach (MainWindow window in mainWindows)
+            {
+                if (window.clipboardID == index)
+                {
+                    mainWindow = window;
+                }
+            }
+            WindowManager.CreateNewClipboardMainWindow(index);
+            foreach (MainWindow window in mainWindows)
+            {
+                if (window.clipboardID == index)
+                {
+                    mainWindow = window;
+                }
+            }
+            return mainWindow;
+        }
+
         public virtual bool Callback(List<KeyboardHook.VKeys> activationKeys)
         {
 

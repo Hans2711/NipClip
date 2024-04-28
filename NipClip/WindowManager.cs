@@ -126,92 +126,106 @@ namespace NipClip
             }
         }
 
-        public static void CreateNewClipboardMainWindow()
+        public static void CreateNewClipboardMainWindow(int index = 0)
         {
-            if (clipboardMainWindows.Count <= 0)
+            if (index != 0)
             {
-                WindowManager.applicationSettings = new ApplicationSettings();
-                WindowManager.applicationSettings.restore();
-
-                WindowManager.keyboardReader = new KeyboardReader(ref WindowManager.clipboardMainWindows);
-
-                MainWindow mainWindow = new MainWindow();
-                mainWindow.Show();
-                WindowManager.clipboardMainWindows.Add(mainWindow);
-                Thread.Sleep(100);
-
-                DirectoryInfo d = new DirectoryInfo(Directory.GetCurrentDirectory());
-                FileInfo[] Files = d.GetFiles("entries*.xml");
-                foreach (FileInfo file in Files)
+                if (index < 10)
                 {
-                    string fileName = file.Name;
-                    if (fileName.StartsWith("entries-") && fileName.EndsWith(".xml"))
-                    {
-                        string numberPart = fileName.Substring("entries-".Length, fileName.Length - "entries-".Length - ".xml".Length);
-                        int number;
-                        if (int.TryParse(numberPart, out number))
-                        {
-                            MainWindow mainWindow1 = new MainWindow(number);
-                            mainWindow1.Show();
-                            WindowManager.clipboardMainWindows.Add(mainWindow1);
-                            Thread.Sleep(100);
-                        }
-                    }
+                    MainWindow mainWindow1 = new MainWindow(index);
+                    mainWindow1.Show();
+                    WindowManager.clipboardMainWindows.Add(mainWindow1);
                 }
-                
-                //TransparentWindow transparentWindow = new TransparentWindow();
-                //transparentWindow.Show();
             }
             else
             {
-                int biggestIndex = 0;
-                int smallestIndex = int.MaxValue;
-
-                foreach (MainWindow window in clipboardMainWindows)
+                if (clipboardMainWindows.Count <= 0)
                 {
-                    if (window.clipboardID != 0)
-                    {
-                        if (biggestIndex < window.clipboardID)
-                        {
-                            biggestIndex = window.clipboardID;
-                        }
+                    WindowManager.applicationSettings = new ApplicationSettings();
+                    WindowManager.applicationSettings.restore();
 
-                        if (smallestIndex > window.clipboardID)
+                    WindowManager.keyboardReader = new KeyboardReader(ref WindowManager.clipboardMainWindows);
+
+                    MainWindow mainWindow = new MainWindow();
+                    mainWindow.Show();
+                    WindowManager.clipboardMainWindows.Add(mainWindow);
+                    Thread.Sleep(100);
+
+                    DirectoryInfo d = new DirectoryInfo(Directory.GetCurrentDirectory());
+                    FileInfo[] Files = d.GetFiles("entries*.xml");
+                    if (applicationSettings.ClipboardIDReverse)
+                    {
+                        Files = Files.Reverse().ToArray();
+                    }
+                    foreach (FileInfo file in Files)
+                    {
+                        string fileName = file.Name;
+                        if (fileName.StartsWith("entries-") && fileName.EndsWith(".xml"))
                         {
-                            smallestIndex = window.clipboardID;
+                            string numberPart = fileName.Substring("entries-".Length, fileName.Length - "entries-".Length - ".xml".Length);
+                            int number;
+                            if (int.TryParse(numberPart, out number))
+                            {
+                                MainWindow mainWindow1 = new MainWindow(number);
+                                mainWindow1.Show();
+                                WindowManager.clipboardMainWindows.Add(mainWindow1);
+                                Thread.Sleep(100);
+                            }
                         }
                     }
-                }
 
-                int newIndex = 0;
-
-                if (applicationSettings.ClipboardIDReverse)
-                {
-                    for (int i = 9; i >= 1; i--)
-                    {
-                        if (!clipboardMainWindows.Any(window => window.clipboardID == i))
-                        {
-                            newIndex = i;
-                            break;
-                        }
-                    }
                 }
                 else
                 {
-                    for (int i = 1; i <= 9; i++)
+                    int biggestIndex = 0;
+                    int smallestIndex = int.MaxValue;
+
+                    foreach (MainWindow window in clipboardMainWindows)
                     {
-                        if (!clipboardMainWindows.Any(window => window.clipboardID == i))
+                        if (window.clipboardID != 0)
                         {
-                            newIndex = i;
-                            break;
+                            if (biggestIndex < window.clipboardID)
+                            {
+                                biggestIndex = window.clipboardID;
+                            }
+
+                            if (smallestIndex > window.clipboardID)
+                            {
+                                smallestIndex = window.clipboardID;
+                            }
                         }
                     }
-                }
-                if (newIndex > 0)
-                {
-                    MainWindow mainWindow = new MainWindow(newIndex);
-                    mainWindow.Show();
-                    WindowManager.clipboardMainWindows.Add(mainWindow);
+
+                    int newIndex = 0;
+
+                    if (applicationSettings.ClipboardIDReverse)
+                    {
+                        for (int i = 9; i >= 1; i--)
+                        {
+                            if (!clipboardMainWindows.Any(window => window.clipboardID == i))
+                            {
+                                newIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 1; i <= 9; i++)
+                        {
+                            if (!clipboardMainWindows.Any(window => window.clipboardID == i))
+                            {
+                                newIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    if (newIndex > 0)
+                    {
+                        MainWindow mainWindow = new MainWindow(newIndex);
+                        mainWindow.Show();
+                        WindowManager.clipboardMainWindows.Add(mainWindow);
+                    }
                 }
             }
         }

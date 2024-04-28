@@ -6,6 +6,7 @@
 -- paste native fix
 -- copy non native fix
 -- if cliboard not exists create it
+-- 
 -- https://learn.microsoft.com/en-us/answers/questions/840881/how-to-get-selectedtext-from-other-applications
 
 - Sorter
@@ -14,6 +15,7 @@
 - Image support
 
 - transparent window
+-- Show on copy hold
 
 - first open language Select
 

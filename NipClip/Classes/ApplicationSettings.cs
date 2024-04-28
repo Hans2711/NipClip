@@ -20,6 +20,8 @@ namespace NipClip.Classes
         public List<string> nipLangTemplates = new List<string>();
 
         public KeyboardHook.VKeys leaderKey { get; set; }
+        public KeyboardHook.VKeys copyKey { get; set; }
+        public KeyboardHook.VKeys pasteKey { get; set; }
 
         public bool ClipboardIDReverse = false;
 
@@ -66,6 +68,8 @@ namespace NipClip.Classes
                 this.EncryptionKey = settings.EncryptionKey;
                 this.nipLangTemplates = settings.nipLangTemplates;
                 this.leaderKey = settings.leaderKey;
+                this.copyKey = settings.copyKey;
+                this.pasteKey = settings.pasteKey;
                 this.DecryptionEnabled = settings.DecryptionEnabled;
                 this.ClipboardIDReverse = settings.ClipboardIDReverse;
                 this.languages = settings.languages;
@@ -88,6 +92,18 @@ namespace NipClip.Classes
                     this.languages.Add("fr");
                 }
 
+                if (this.leaderKey == KeyboardHook.VKeys.NONE)
+                {
+                    this.leaderKey = KeyboardHook.VKeys.LCONTROL;
+                }
+                if (this.copyKey == KeyboardHook.VKeys.NONE)
+                {
+                    this.copyKey = KeyboardHook.VKeys.KEY_C;
+                }
+                if (this.pasteKey == KeyboardHook.VKeys.NONE)
+                {
+                    this.pasteKey = KeyboardHook.VKeys.KEY_V;
+                }
 
                 if (string.IsNullOrEmpty(this.selectedLanguage))
                 {
