@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 
 namespace NipClip
 {
@@ -70,6 +71,7 @@ namespace NipClip
             {
                 foreach (MainWindow window in clipboardMainWindows)
                 {
+                    window.notifyIcon.Visible = false;
                     window.Close();
                 }
             }

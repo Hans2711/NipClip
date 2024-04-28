@@ -75,9 +75,9 @@ namespace NipClip.Classes
                 {
                     this.nipLangTemplates.Add("var_dump($N0, $N1)");
                     this.nipLangTemplates.Add("[$N0,$N1]");
-                    this.nipLangTemplates.Add("$N0,\n$N1");
+                    this.nipLangTemplates.Add("$N0,\\n$N1");
                     this.nipLangTemplates.Add("@import \"$N\"\\n");
-                    this.nipLangTemplates.Add("using $N\n");
+                    this.nipLangTemplates.Add("using $N\\n");
                 }
 
                 if (this.languages.Count <= 0)
@@ -85,6 +85,7 @@ namespace NipClip.Classes
                     this.languages.Add("en");
                     this.languages.Add("de");
                     this.languages.Add("es");
+                    this.languages.Add("fr");
                 }
 
 

@@ -311,7 +311,7 @@ namespace NipClip
                 {
                     WindowManager.applicationSettings.selectedLanguage = (string)this.languagesSelection.SelectedItem;
                     WindowManager.CloseAll(false);
-                    WindowManager.clipboardMainWindows.Clear();
+                    WindowManager.clipboardMainWindows = new List<MainWindow> ();
                     WindowManager.CreateNewClipboardMainWindow();
                     WindowManager.applicationSettings.setCurrentLanguage();
                 }

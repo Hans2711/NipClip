@@ -14,4 +14,6 @@
 
 - transparent window
 
+- first open language Select
+
 GeneralOptions
