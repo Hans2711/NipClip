@@ -92,7 +92,6 @@ namespace NipClip.Classes.Clipboard
             this.clipboardStorage.entries.Clear();
             File.Delete(this.filename); 
 
-            this.window.notifyIcon.Visible = false;
             this.window.Close();
         }
 

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Forms;
 
 namespace NipClip
@@ -56,14 +57,14 @@ namespace NipClip
             keyboardReader.fillNextInputToLeaderKey();
         }
 
-        public static void CloseAll(bool exit = true)
+        public static void Close(Object sender, System.EventArgs e)
         {
             foreach (MainWindow window in clipboardMainWindows)
             {
                 window.clipboardReader.export();
             }
             applicationSettings.save();
-            if (exit)
+            if (sender != null)
             {
                 Environment.Exit(0);
             }
@@ -71,7 +72,6 @@ namespace NipClip
             {
                 foreach (MainWindow window in clipboardMainWindows)
                 {
-                    window.notifyIcon.Visible = false;
                     window.Close();
                 }
             }
@@ -126,6 +126,74 @@ namespace NipClip
             }
         }
 
+        public static NotifyIcon NotifyIcon { get; set; }
+
+        public static void InitNotifyIcon()
+        {
+            NotifyIcon = new NotifyIcon();
+            NotifyIcon.Icon = new System.Drawing.Icon("logo-black.ico");
+            NotifyIcon.Visible = true;
+            NotifyIcon.Text = "NipClip";
+
+            NotifyIcon.ContextMenuStrip = new ContextMenuStrip();
+            NotifyIcon.ContextMenuStrip.Items.Add("Close", null, Close);
+        }
+
+        public static void ToggleWindow(Object sender, System.EventArgs e)
+        {
+            int index = GetIndexFromInput(sender.ToString());
+
+            if (index < 0)
+                return;
+
+            foreach (var window in clipboardMainWindows)
+            {
+                if (window.clipboardID == index)
+                {
+                    if (window.Visibility == Visibility.Visible)
+                    {
+                        window.Visibility = Visibility.Hidden;
+                    }
+                    else
+                    {
+                        window.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+        }
+
+        public static int GetIndexFromInput(string input)
+        {
+            string[] parts = input.Split('|');
+
+            if (parts.Length > 1)
+            {
+                string lastPart = parts[1].Trim();
+                if (lastPart.Equals("Windows Default", StringComparison.OrdinalIgnoreCase))
+                {
+                    return 0;
+                }
+                else if (int.TryParse(lastPart, out int index))
+                {
+                    return index;
+                }
+            }
+
+            return -1;
+        }
+
+        public static void AddMainWindowToIcon(ref MainWindow window)
+        {
+            if (window.clipboardID == 0)
+            {
+                NotifyIcon.ContextMenuStrip.Items.Add("Clipboard | Windows Default", null, ToggleWindow);
+            }
+            else
+            {
+                NotifyIcon.ContextMenuStrip.Items.Add("Clipboard | " + window.clipboardID, null, ToggleWindow);
+            }
+        }
+
         public static void CreateNewClipboardMainWindow(int index = 0)
         {
             if (index != 0)
@@ -134,6 +202,7 @@ namespace NipClip
                 {
                     MainWindow mainWindow1 = new MainWindow(index);
                     mainWindow1.Show();
+                    AddMainWindowToIcon(ref mainWindow1);
                     WindowManager.clipboardMainWindows.Add(mainWindow1);
                 }
             }
@@ -150,6 +219,9 @@ namespace NipClip
                     mainWindow.Show();
                     WindowManager.clipboardMainWindows.Add(mainWindow);
                     Thread.Sleep(100);
+
+                    InitNotifyIcon();
+                    AddMainWindowToIcon(ref mainWindow);
 
                     DirectoryInfo d = new DirectoryInfo(Directory.GetCurrentDirectory());
                     FileInfo[] Files = d.GetFiles("entries*.xml");
@@ -168,6 +240,7 @@ namespace NipClip
                             {
                                 MainWindow mainWindow1 = new MainWindow(number);
                                 mainWindow1.Show();
+                                AddMainWindowToIcon(ref mainWindow1);
                                 WindowManager.clipboardMainWindows.Add(mainWindow1);
                                 Thread.Sleep(100);
                             }
@@ -224,6 +297,7 @@ namespace NipClip
                     {
                         MainWindow mainWindow = new MainWindow(newIndex);
                         mainWindow.Show();
+                        AddMainWindowToIcon(ref mainWindow);
                         WindowManager.clipboardMainWindows.Add(mainWindow);
                     }
                 }

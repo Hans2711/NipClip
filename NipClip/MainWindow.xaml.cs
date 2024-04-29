@@ -36,8 +36,6 @@ namespace NipClip
 
         public int clipboardID = 0;
 
-        public Forms.NotifyIcon notifyIcon { get; set; }
-
         public MainWindow()
         {
             InitializeComponent();
@@ -72,25 +70,6 @@ namespace NipClip
 
             ClipboardReader.encryptionKey = WindowManager.applicationSettings.EncryptionKey;
 
-            this.notifyIcon = new Forms.NotifyIcon();
-            this.notifyIcon.Icon = new System.Drawing.Icon("logo-black.ico");
-            this.notifyIcon.Visible = true;
-            this.notifyIcon.Text = this.Title;
-
-            this.notifyIcon.ContextMenuStrip = new Forms.ContextMenuStrip();
-            this.notifyIcon.ContextMenuStrip.Items.Add(this.Title, null, null);
-            this.notifyIcon.ContextMenuStrip.Items.Add("Copy Last Entry", null, this.copyLastItem);
-            this.notifyIcon.ContextMenuStrip.Items.Add("Kill All", null, this.killAll);
-            this.notifyIcon.ContextMenuStrip.Items.Add("Kill", null, this.kill);
-            this.notifyIcon.ContextMenuStrip.Items.Add("Close All", null, this.closeAll);
-            this.notifyIcon.ContextMenuStrip.Items.Add("Close", null, this.close);
-
-            this.notifyIcon.Click +=
-                delegate (object sender, EventArgs args)
-                {
-                    this.Show();
-                };
-
             this.stringManipInput_GotFocus();
 
             this.currentLeader.ItemsSource = Enum.GetValues(typeof(KeyboardHook.VKeys));
@@ -121,12 +100,6 @@ namespace NipClip
             WindowManager.applicationSettings.save();
             this.Close();
         }
-
-        public void closeAll(Object sender, System.EventArgs e)
-        {
-            WindowManager.CloseAll();
-        }
-
 
         private void stringManipTemplate_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -310,7 +283,7 @@ namespace NipClip
                 if ((string)this.languagesSelection.SelectedItem != WindowManager.applicationSettings.selectedLanguage)
                 {
                     WindowManager.applicationSettings.selectedLanguage = (string)this.languagesSelection.SelectedItem;
-                    WindowManager.CloseAll(false);
+                    WindowManager.Close(null, null);
                     WindowManager.clipboardMainWindows = new List<MainWindow> ();
                     WindowManager.CreateNewClipboardMainWindow();
                     WindowManager.applicationSettings.setCurrentLanguage();
