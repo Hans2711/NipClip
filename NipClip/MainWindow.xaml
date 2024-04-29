@@ -103,14 +103,22 @@
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="0.6*"/>
                                 <RowDefinition Height="30"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="0.6*"/>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="0.6*"/>
                             </Grid.RowDefinitions>
 
                             <Label Margin="10,0" Content="{x:Static p:Resources.leaderKey}" />
                             <ComboBox Grid.Row="1" x:Name="currentLeader" Margin="10,20" SelectionChanged="currentLeader_SelectionChanged"></ComboBox>
                             <Button x:Name="changeCurrentLeaderButton" Grid.Row="1" Grid.Column="1" Margin="10,20" Click="changeCurrentLeaderButton_Click" Content="{x:Static p:Resources.change}" />
 
+                            <Label Margin="10,0" Grid.Row="2" Content="{x:Static p:Resources.copyKey}" />
+                            <ComboBox Grid.Row="3" x:Name="copyKeySelection" Margin="10,20" SelectionChanged="copyKeySelection_SelectionChanged"></ComboBox>
+                            <Button x:Name="changeCopyButton" Grid.Row="3" Grid.Column="1" Margin="10,20" Content="{x:Static p:Resources.change}" Click="changeCopyButton_Click" />
+
+                            <Label Margin="10,0" Grid.Row="4" Content="{x:Static p:Resources.pasteKey}" />
+                            <ComboBox Grid.Row="5" x:Name="pasteKeySelection" Margin="10,20" SelectionChanged="pasteKeySelection_SelectionChanged"></ComboBox>
+                            <Button x:Name="changepasteButton" Grid.Row="5" Grid.Column="1" Margin="10,20" Content="{x:Static p:Resources.change}" Click="changepasteButton_Click" />
                         </Grid>
                     </TabItem>
                 </TabControl>

@@ -22,52 +22,52 @@ namespace NipClip.Classes.Keyboard
             {
                 this.Keys.Add(new List<KeyboardHook.VKeys>());
                 this.Keys.Last().Add(WindowManager.applicationSettings.leaderKey);
-                this.Keys.Last().Add(KeyboardHook.VKeys.KEY_C);
+                this.Keys.Last().Add(WindowManager.applicationSettings.copyKey);
             }
 
             this.Keys.Add(new List<KeyboardHook.VKeys>());
             this.Keys.Last().Add(WindowManager.applicationSettings.leaderKey);
-            this.Keys.Last().Add(KeyboardHook.VKeys.KEY_C);
+            this.Keys.Last().Add(WindowManager.applicationSettings.copyKey);
             this.Keys.Last().Add(KeyboardHook.VKeys.KEY_1);
 
             this.Keys.Add(new List<KeyboardHook.VKeys>());
             this.Keys.Last().Add(WindowManager.applicationSettings.leaderKey);
-            this.Keys.Last().Add(KeyboardHook.VKeys.KEY_C);
+            this.Keys.Last().Add(WindowManager.applicationSettings.copyKey);
             this.Keys.Last().Add(KeyboardHook.VKeys.KEY_2);
 
             this.Keys.Add(new List<KeyboardHook.VKeys>());
             this.Keys.Last().Add(WindowManager.applicationSettings.leaderKey);
-            this.Keys.Last().Add(KeyboardHook.VKeys.KEY_C);
+            this.Keys.Last().Add(WindowManager.applicationSettings.copyKey);
             this.Keys.Last().Add(KeyboardHook.VKeys.KEY_3);
 
             this.Keys.Add(new List<KeyboardHook.VKeys>());
             this.Keys.Last().Add(WindowManager.applicationSettings.leaderKey);
-            this.Keys.Last().Add(KeyboardHook.VKeys.KEY_C);
+            this.Keys.Last().Add(WindowManager.applicationSettings.copyKey);
             this.Keys.Last().Add(KeyboardHook.VKeys.KEY_4);
 
             this.Keys.Add(new List<KeyboardHook.VKeys>());
             this.Keys.Last().Add(WindowManager.applicationSettings.leaderKey);
-            this.Keys.Last().Add(KeyboardHook.VKeys.KEY_C);
+            this.Keys.Last().Add(WindowManager.applicationSettings.copyKey);
             this.Keys.Last().Add(KeyboardHook.VKeys.KEY_5);
 
             this.Keys.Add(new List<KeyboardHook.VKeys>());
             this.Keys.Last().Add(WindowManager.applicationSettings.leaderKey);
-            this.Keys.Last().Add(KeyboardHook.VKeys.KEY_C);
+            this.Keys.Last().Add(WindowManager.applicationSettings.copyKey);
             this.Keys.Last().Add(KeyboardHook.VKeys.KEY_6);
 
             this.Keys.Add(new List<KeyboardHook.VKeys>());
             this.Keys.Last().Add(WindowManager.applicationSettings.leaderKey);
-            this.Keys.Last().Add(KeyboardHook.VKeys.KEY_C);
+            this.Keys.Last().Add(WindowManager.applicationSettings.copyKey);
             this.Keys.Last().Add(KeyboardHook.VKeys.KEY_7);
 
             this.Keys.Add(new List<KeyboardHook.VKeys>());
             this.Keys.Last().Add(WindowManager.applicationSettings.leaderKey);
-            this.Keys.Last().Add(KeyboardHook.VKeys.KEY_C);
+            this.Keys.Last().Add(WindowManager.applicationSettings.copyKey);
             this.Keys.Last().Add(KeyboardHook.VKeys.KEY_8);
 
             this.Keys.Add(new List<KeyboardHook.VKeys>());
             this.Keys.Last().Add(WindowManager.applicationSettings.leaderKey);
-            this.Keys.Last().Add(KeyboardHook.VKeys.KEY_C);
+            this.Keys.Last().Add(WindowManager.applicationSettings.copyKey);
             this.Keys.Last().Add(KeyboardHook.VKeys.KEY_9);
 
             this.Keys.Reverse();

@@ -75,6 +75,12 @@ namespace NipClip
             this.currentLeader.ItemsSource = Enum.GetValues(typeof(KeyboardHook.VKeys));
             this.currentLeader.SelectedItem = WindowManager.applicationSettings.leaderKey;
 
+            this.copyKeySelection.ItemsSource = Enum.GetValues(typeof(KeyboardHook.VKeys));
+            this.copyKeySelection.SelectedItem = WindowManager.applicationSettings.copyKey;
+
+            this.pasteKeySelection.ItemsSource = Enum.GetValues(typeof(KeyboardHook.VKeys));
+            this.pasteKeySelection.SelectedItem = WindowManager.applicationSettings.pasteKey;
+
             this.languagesSelection.SelectedItem = WindowManager.applicationSettings.selectedLanguage;
         }
 
@@ -214,7 +220,19 @@ namespace NipClip
                     if ((KeyboardHook.VKeys)this.currentLeader.SelectedItem != WindowManager.applicationSettings.leaderKey)
                     {
                         this.currentLeader.SelectedItem = WindowManager.applicationSettings.leaderKey;
-                        this.changeCurrentLeaderButton.Content = "Change";
+                        this.changeCurrentLeaderButton.Content = Properties.Resources.change;
+                    }
+
+                    if ((KeyboardHook.VKeys)this.copyKeySelection.SelectedItem != WindowManager.applicationSettings.copyKey)
+                    {
+                        this.copyKeySelection.SelectedItem = WindowManager.applicationSettings.copyKey;
+                        this.changeCopyButton.Content = Properties.Resources.change;
+                    }
+
+                    if ((KeyboardHook.VKeys)this.pasteKeySelection.SelectedItem != WindowManager.applicationSettings.pasteKey)
+                    {
+                        this.pasteKeySelection.SelectedItem = WindowManager.applicationSettings.pasteKey;
+                        this.changepasteButton.Content = Properties.Resources.change;
                     }
                 }
 
@@ -248,7 +266,7 @@ namespace NipClip
 
         private void changeCurrentLeaderButton_Click(object sender, RoutedEventArgs e)
         {
-            this.changeCurrentLeaderButton.Content = "Waiting for input";
+            this.changeCurrentLeaderButton.Content = Properties.Resources.waitingForInput;
             WindowManager.ChangeKeyboardLeader();
         }
 
@@ -289,6 +307,28 @@ namespace NipClip
                     WindowManager.applicationSettings.setCurrentLanguage();
                 }
             }
+        }
+
+        private void copyKeySelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            WindowManager.ChangeCopyKey((KeyboardHook.VKeys)this.copyKeySelection.SelectedItem);
+        }
+
+        private void pasteKeySelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            WindowManager.ChangePasteKey((KeyboardHook.VKeys)this.pasteKeySelection.SelectedItem);
+        }
+
+        private void changepasteButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.changepasteButton.Content = Properties.Resources.waitingForInput;
+            WindowManager.ChangePasteKey();
+        }
+
+        private void changeCopyButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.changeCopyButton.Content = Properties.Resources.waitingForInput;
+            WindowManager.ChangeCopyKey();
         }
     }
 }

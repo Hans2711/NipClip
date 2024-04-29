@@ -19,6 +19,8 @@ namespace NipClip.Classes.Keyboard
         public List<MainWindow> mainWindows { get; set; }
 
         public bool setNextLeaderKey { get; set; }
+        public bool setNextCopyKey { get; set; }
+        public bool setNextPasteKey { get; set; }
 
         public KeyboardReader(ref List<MainWindow> mainWindows)
         {
@@ -45,6 +47,16 @@ namespace NipClip.Classes.Keyboard
             this.setNextLeaderKey = true;
         }
 
+        public void fillNextInputToCopyKey()
+        {
+            this.setNextCopyKey = true;
+        }
+
+        public void fillNextInputToPasteKey()
+        {
+            this.setNextPasteKey = true;
+        }
+
         private bool checkForShortcut()
         {
             foreach (var shortcut in this.shortcuts)
@@ -69,6 +81,11 @@ namespace NipClip.Classes.Keyboard
 
         private bool keyboardHook_KeyUp(KeyboardHook.VKeys key)
         {
+            if (key == WindowManager.applicationSettings.leaderKey)
+            {
+                WindowManager.CloseTransparentWindow();
+            }
+
             this.buffer.Remove(key);
             //Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] KeyUp Event {" + key.ToString() + "}");
             return true;
@@ -79,6 +96,21 @@ namespace NipClip.Classes.Keyboard
             {
                 WindowManager.ChangeKeyboardLeader(key);
                 this.setNextLeaderKey = false;
+            }
+            if (this.setNextCopyKey)
+            {
+                WindowManager.ChangeCopyKey(key);
+                this.setNextCopyKey = false;
+            }
+            if (this.setNextPasteKey)
+            {
+                WindowManager.ChangePasteKey(key); 
+                this.setNextPasteKey = false;
+            }
+
+            if (key == WindowManager.applicationSettings.leaderKey)
+            {
+                WindowManager.OpenTransparentWindow();
             }
 
             if (!this.buffer.Contains(key)) 

@@ -123,6 +123,9 @@
   <data name="change" xml:space="preserve">
     <value>Change</value>
   </data>
+  <data name="copyKey" xml:space="preserve">
+    <value>Copy Key</value>
+  </data>
   <data name="createNewClipboard" xml:space="preserve">
     <value>Create new Clipboard</value>
   </data>
@@ -168,6 +171,9 @@
   <data name="options" xml:space="preserve">
     <value>Options</value>
   </data>
+  <data name="pasteKey" xml:space="preserve">
+    <value>Paste Key</value>
+  </data>
   <data name="process" xml:space="preserve">
     <value>Process</value>
   </data>
@@ -179,5 +185,8 @@
   </data>
   <data name="stringConversion" xml:space="preserve">
     <value>String Conversion</value>
+  </data>
+  <data name="waitingForInput" xml:space="preserve">
+    <value>Waiting for Input</value>
   </data>
 </root>

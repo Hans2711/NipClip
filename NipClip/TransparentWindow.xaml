@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NipClip"
         mc:Ignorable="d"
-        Title="TransparentWindow" Height="200" Width="800">
+        Title="TransparentWindow" Height="200" Width="800" WindowStyle="None" WindowStartupLocation="CenterScreen">
     <Window.Background>
         <SolidColorBrush Opacity="0" Color="White"/>
     </Window.Background>
     <Grid>
 
-        <Label Foreground="Blue" VerticalAlignment="Center" HorizontalAlignment="Center">Hello I am the Label</Label>
+        <Label x:Name="label" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18">Select an Operation (Copy, Paste)</Label>
         
     </Grid>
 </Window>

@@ -3,8 +3,8 @@
 
 - Keyboard Hook (Shortcuts)
 
--- paste native fix
--- copy non native fix
+-- paste no native fix
+-- copy no native fix
 -- if cliboard not exists create it
 -- leader shortcut in default
 -- 

@@ -43,6 +43,36 @@ namespace NipClip
             RefreshAll();
         }
 
+        public static void ChangeCopyKey(KeyboardHook.VKeys key)
+        {
+            WindowManager.applicationSettings.copyKey = key;
+            WindowManager.applicationSettings.save();
+            WindowManager.RefreshAll();
+
+            keyboardReader = null;
+            keyboardReader = new KeyboardReader(ref clipboardMainWindows);
+        }
+
+        public static void ChangeCopyKey()
+        {
+            keyboardReader.fillNextInputToCopyKey();
+        }
+
+        public static void ChangePasteKey(KeyboardHook.VKeys key)
+        {
+            WindowManager.applicationSettings.pasteKey = key;
+            WindowManager.applicationSettings.save();
+            WindowManager.RefreshAll();
+
+            keyboardReader = null;
+            keyboardReader = new KeyboardReader(ref clipboardMainWindows);
+        }
+
+        public static void ChangePasteKey()
+        {
+            keyboardReader.fillNextInputToPasteKey();
+        }
+
         public static void ChangeKeyboardLeader(KeyboardHook.VKeys key)
         {
             WindowManager.applicationSettings.leaderKey = key;
@@ -194,6 +224,28 @@ namespace NipClip
             }
         }
 
+        public static TransparentWindow transparentWindow { get; set; }
+        public static void OpenTransparentWindow()
+        {
+            if (transparentWindow == null)
+            {
+                transparentWindow = new TransparentWindow();
+                transparentWindow.Show();
+            }
+            else
+            {
+                transparentWindow.Show();
+            }
+        }
+
+        public static void CloseTransparentWindow()
+        {
+            if (transparentWindow != null)
+            {
+                transparentWindow.Hide();
+            }
+        }
+
         public static void CreateNewClipboardMainWindow(int index = 0)
         {
             if (index != 0)
@@ -210,8 +262,17 @@ namespace NipClip
             {
                 if (clipboardMainWindows.Count <= 0)
                 {
-                    WindowManager.applicationSettings = new ApplicationSettings();
-                    WindowManager.applicationSettings.restore();
+                    if (File.Exists("settings.xml"))
+                    {
+                        WindowManager.applicationSettings = new ApplicationSettings();
+                        WindowManager.applicationSettings.restore();
+                    }
+                    else
+                    {
+                        WindowManager.applicationSettings = new ApplicationSettings();
+                        WindowManager.applicationSettings.save();
+                        WindowManager.applicationSettings.restore();
+                    }
 
                     WindowManager.keyboardReader = new KeyboardReader(ref WindowManager.clipboardMainWindows);
 
@@ -220,8 +281,11 @@ namespace NipClip
                     WindowManager.clipboardMainWindows.Add(mainWindow);
                     Thread.Sleep(100);
 
-                    InitNotifyIcon();
-                    AddMainWindowToIcon(ref mainWindow);
+                    if (NotifyIcon == null)
+                    {
+                        InitNotifyIcon();
+                        AddMainWindowToIcon(ref mainWindow);
+                    }
 
                     DirectoryInfo d = new DirectoryInfo(Directory.GetCurrentDirectory());
                     FileInfo[] Files = d.GetFiles("entries*.xml");

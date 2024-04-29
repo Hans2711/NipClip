@@ -21,6 +21,13 @@ namespace NipClip
     {
         public TransparentWindow()
         {
+            this.ShowActivated = false;
+            SizeChanged += (o, e) =>
+            {
+                var r = SystemParameters.WorkArea;
+                Left = r.Right - ActualWidth;
+                Top = r.Bottom - ActualHeight;
+            };
             InitializeComponent();
         }
     }

@@ -79,6 +79,15 @@ namespace NipClip.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy Key.
+        /// </summary>
+        public static string copyKey {
+            get {
+                return ResourceManager.GetString("copyKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create new Clipboard.
         /// </summary>
         public static string createNewClipboard {
@@ -214,6 +223,15 @@ namespace NipClip.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Paste Key.
+        /// </summary>
+        public static string pasteKey {
+            get {
+                return ResourceManager.GetString("pasteKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Process.
         /// </summary>
         public static string process {
@@ -246,6 +264,15 @@ namespace NipClip.Properties {
         public static string stringConversion {
             get {
                 return ResourceManager.GetString("stringConversion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Waiting for Input.
+        /// </summary>
+        public static string waitingForInput {
+            get {
+                return ResourceManager.GetString("waitingForInput", resourceCulture);
             }
         }
     }
