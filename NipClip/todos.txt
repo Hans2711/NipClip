@@ -2,7 +2,6 @@
 - (done)
 
 - Keyboard Hook (Shortcuts)
-
 -- paste no native fix
 -- copy no native fix
 -- if cliboard not exists create it

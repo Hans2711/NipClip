@@ -160,6 +160,10 @@ namespace NipClip
 
         public static void InitNotifyIcon()
         {
+            if (NotifyIcon != null) {
+                NotifyIcon.Visible = false;
+            }
+
             NotifyIcon = new NotifyIcon();
             NotifyIcon.Icon = new System.Drawing.Icon("logo-black.ico");
             NotifyIcon.Visible = true;
@@ -229,12 +233,15 @@ namespace NipClip
         {
             if (transparentWindow == null)
             {
-                transparentWindow = new TransparentWindow();
+                transparentWindow = new TransparentWindow(ref clipboardMainWindows);
                 transparentWindow.Show();
+                transparentWindow.SupressionTry();
             }
             else
             {
                 transparentWindow.Show();
+                transparentWindow.SupressionTry();
+                transparentWindow.Refresh();
             }
         }
 
@@ -242,6 +249,7 @@ namespace NipClip
         {
             if (transparentWindow != null)
             {
+                transparentWindow.DesupressionTry();
                 transparentWindow.Hide();
             }
         }
@@ -281,11 +289,8 @@ namespace NipClip
                     WindowManager.clipboardMainWindows.Add(mainWindow);
                     Thread.Sleep(100);
 
-                    if (NotifyIcon == null)
-                    {
-                        InitNotifyIcon();
-                        AddMainWindowToIcon(ref mainWindow);
-                    }
+                    InitNotifyIcon();
+                    AddMainWindowToIcon(ref mainWindow);
 
                     DirectoryInfo d = new DirectoryInfo(Directory.GetCurrentDirectory());
                     FileInfo[] Files = d.GetFiles("entries*.xml");

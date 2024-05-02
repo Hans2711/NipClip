@@ -1,4 +1,5 @@
 ﻿using NipClip.Classes.Clipboard;
+using NipClip.Classes.Keyboard;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,8 @@ namespace NipClip.Classes.Clipboard
                 System.Windows.Clipboard.Clear();
 
                 // Send CTRL+C using keybd_event
+                keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0); // Press CTRL
+                keybd_event(VK_C, 0, KEYEVENTF_KEYUP, 0); // Press CTRL
                 keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYDOWN, 0); // Press CTRL
                 keybd_event(VK_C, 0, KEYEVENTF_KEYDOWN, 0); // Press C
                 keybd_event(VK_C, 0, KEYEVENTF_KEYUP, 0); // Release C
@@ -77,6 +80,17 @@ namespace NipClip.Classes.Clipboard
             keybd_event(VK_V, 0, KEYEVENTF_KEYUP, 0);
             keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
         }
+
+        public static void sendKeyDown(KeyboardHook.VKeys key)
+        {
+            keybd_event((byte)key, 0, KEYEVENTF_KEYDOWN, 0);
+        }
+
+        public static void sendKeyUp(KeyboardHook.VKeys key)
+        {
+            keybd_event((byte)key, 0, KEYEVENTF_KEYUP, 0);
+        }
+
 
         private static bool WaitForClipboardText(int timeoutMillis)
         {
