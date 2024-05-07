@@ -2,6 +2,9 @@
 - (done)
 
 - Keyboard Hook (Shortcuts)
+- Add Extract Shortcut
+
+- Remove non Native Windows Shortcuts
 
 -- paste no native fix
 -- copy no native fix
