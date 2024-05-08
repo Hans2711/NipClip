@@ -96,6 +96,7 @@ namespace NipClip
             applicationSettings.save();
             if (sender != null)
             {
+                keyboardReader.hook.Uninstall();
                 Environment.Exit(0);
             }
             else
@@ -231,10 +232,12 @@ namespace NipClip
             {
                 transparentWindow = new TransparentWindow();
                 transparentWindow.Show();
+                transparentWindow.active = true;
             }
             else
             {
                 transparentWindow.Show();
+                transparentWindow.active = true;
             }
         }
 
@@ -243,6 +246,9 @@ namespace NipClip
             if (transparentWindow != null)
             {
                 transparentWindow.Hide();
+                transparentWindow.Clean();
+                transparentWindow.active = false;
+                transparentWindow.activeAction = string.Empty;
             }
         }
 

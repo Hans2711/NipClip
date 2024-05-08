@@ -245,8 +245,15 @@ namespace NipClip.Classes.Keyboard
         /// </summary>
         public void Install()
         {
-            hookHandler = HookFunc;
-            hookID = SetHook(hookHandler);
+            if (hookID == IntPtr.Zero)
+            {
+                hookHandler = HookFunc;
+                hookID = SetHook(hookHandler);
+            }
+            else
+            {
+                Debug.WriteLine("Keyboard hook already installed.");
+            }
         }
 
         /// <summary>
@@ -254,7 +261,15 @@ namespace NipClip.Classes.Keyboard
         /// </summary>
         public void Uninstall()
         {
-            UnhookWindowsHookEx(hookID);
+            if (hookID != IntPtr.Zero)
+            {
+                UnhookWindowsHookEx(hookID);
+                hookID = IntPtr.Zero;
+            }
+            else
+            {
+                Debug.WriteLine("No keyboard hook to uninstall.");
+            }
         }
 
         /// <summary>
@@ -271,59 +286,74 @@ namespace NipClip.Classes.Keyboard
         /// <summary>
         /// Default hook call, which analyses pressed keys
         /// </summary>
+        private HashSet<VKeys> pressedKeys = new HashSet<VKeys>();  // Tracks the state of each key
+
+        private readonly object lockObject = new object();  // Lock object for thread safety
+
         private IntPtr HookFunc(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0)
             {
                 int iwParam = wParam.ToInt32();
+                KBDLLHOOKSTRUCT kbdStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
 
-                // Check for Key Down or System Key Down
-                if (iwParam == WM_KEYDOWN || iwParam == WM_SYSKEYDOWN)
+                lock (lockObject)  // Ensure thread-safe access to pressedKeys
                 {
-                    if (KeyDown != null)
-                    {
-                        VKeys key = (VKeys)Marshal.ReadInt32(lParam);
-                        bool status = KeyDown.Invoke(key);
+                    bool isKeyDown = (iwParam == WM_KEYDOWN || iwParam == WM_SYSKEYDOWN);
+                    bool isKeyUp = (iwParam == WM_KEYUP || iwParam == WM_SYSKEYUP);
+                    bool keyAlreadyPressed = pressedKeys.Contains(kbdStruct.vkCode);
+                    bool keyisSupressed = GlobalMemory.supressAllKeyDownEvents.Contains(kbdStruct.vkCode);
 
-                        // If KeyDown event returns false, suppress the key
+                    Console.WriteLine($"Event: {(isKeyDown ? "KeyDown" : "KeyUp")} - Key: {kbdStruct.vkCode} - Flags: {kbdStruct.flags} - {keyAlreadyPressed} - PressedKeys: {string.Join(", ", pressedKeys)}");
+
+                    // Handling Key Down
+                    if (isKeyDown && !keyAlreadyPressed)
+                    {
+                        pressedKeys.Add(kbdStruct.vkCode);
+                        bool status = KeyDown?.Invoke(kbdStruct.vkCode) ?? true;
+                        Console.WriteLine($"Processed KeyDown: {kbdStruct.vkCode}");
                         if (!status)
                         {
-                            return new IntPtr(1);
+                            return (IntPtr)1;  // Suppress the key
                         }
                     }
-                }
-                // Check for Key Up or System Key Up
-                else if (iwParam == WM_KEYUP || iwParam == WM_SYSKEYUP)
-                {
-                    if (KeyUp != null)
+                    // Handling Key Up
+                    else if (isKeyUp)
                     {
-                        VKeys key = (VKeys)Marshal.ReadInt32(lParam);
-                        bool status = KeyUp.Invoke(key);
-
-                        // If KeyUp event returns false, suppress the key
+                        pressedKeys.Remove(kbdStruct.vkCode);
+                        bool status = KeyUp?.Invoke(kbdStruct.vkCode) ?? true;
+                        Console.WriteLine($"Processed KeyUp: {kbdStruct.vkCode}");
                         if (!status)
                         {
-                            return new IntPtr(1);
+                            return (IntPtr)1;  // Suppress the key
                         }
                     }
                 }
             }
 
-            // Call the next hook in the chain
             return CallNextHookEx(hookID, nCode, wParam, lParam);
+        } 
+
+        // Define the KBDLLHOOKSTRUCT
+        [StructLayout(LayoutKind.Sequential)]
+        private struct KBDLLHOOKSTRUCT
+        {
+            public VKeys vkCode;
+            public uint scanCode;
+            public uint flags;
+            public uint time;
+            public IntPtr dwExtraInfo;
         }
 
-        /// <summary>
-        /// Destructor. Unhook current hook
-        /// </summary>
+        // Constants for flags
+        private const uint LLKHF_UP = 0x00000080;
+        private const uint LLKHF_REPEAT = 0x00040000; 
+
         ~KeyboardHook()
         {
             Uninstall();
         }
 
-        /// <summary>
-        /// Low-Level function declarations
-        /// </summary>
         #region WinAPI
         private const int WM_KEYDOWN = 0x100;
         private const int WM_SYSKEYDOWN = 0x104;
