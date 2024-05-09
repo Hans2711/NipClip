@@ -139,10 +139,15 @@ namespace NipClip.Classes.Keyboard
 
             if (GlobalMemory.supressAllKeyDownEvents.Contains(key))
             {
-                Console.WriteLine("Down: ");
-                foreach (KeyboardHook.VKeys keyy in GlobalMemory.supressAllKeyDownEvents)
+                //Console.WriteLine("Down: ");
+                //foreach (KeyboardHook.VKeys keyy in GlobalMemory.supressAllKeyDownEvents)
+                //{
+                //    Console.WriteLine(keyy);
+                //}
+                if (this.nonNativeLeaderKey && key == WindowManager.applicationSettings.leaderKey)
                 {
-                    Console.WriteLine(keyy);
+                    GlobalMemory.supressOnceKeyUpEvent.Add(key);
+                    KeyboardUtility.sendKeyUp(key);
                 }
                 return false;
             }
