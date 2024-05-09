@@ -79,10 +79,17 @@ namespace NipClip.Classes.Keyboard
 
         private bool keyboardHook_KeyUp(KeyboardHook.VKeys key)
         {
+            if (GlobalMemory.supressOnceKeyUpEvent.Contains(key))
+            {
+                GlobalMemory.supressOnceKeyUpEvent.Remove(key);
+                return false;
+            }
+
             if (key == WindowManager.applicationSettings.leaderKey)
             {
                 if (this.nonNativeLeaderKey)
                 {
+                    Console.WriteLine("Closing");
                     KeyboardUtility.nonNativeLeaderToControlKeyUp(key);
                     WindowManager.CloseTransparentWindow();
                     this.redirectKeyDownEvent = false;
@@ -132,12 +139,16 @@ namespace NipClip.Classes.Keyboard
 
             if (GlobalMemory.supressAllKeyDownEvents.Contains(key))
             {
+                Console.WriteLine("Down: ");
+                foreach (KeyboardHook.VKeys keyy in GlobalMemory.supressAllKeyDownEvents)
+                {
+                    Console.WriteLine(keyy);
+                }
                 return false;
             }
 
             if (key == WindowManager.applicationSettings.leaderKey)
             {
-
                 if (this.nonNativeLeaderKey)
                 {
                     KeyboardUtility.nonNativeLeaderToControlKeyDown(key);

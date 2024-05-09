@@ -230,7 +230,7 @@ namespace NipClip
         {
             if (transparentWindow == null)
             {
-                transparentWindow = new TransparentWindow();
+                transparentWindow = new TransparentWindow(ref clipboardMainWindows);
                 transparentWindow.Show();
                 transparentWindow.active = true;
             }
@@ -246,7 +246,7 @@ namespace NipClip
             if (transparentWindow != null)
             {
                 transparentWindow.Hide();
-                transparentWindow.Clean();
+                transparentWindow.Reset();
                 transparentWindow.active = false;
                 transparentWindow.activeAction = string.Empty;
             }

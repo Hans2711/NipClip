@@ -12,6 +12,7 @@ namespace NipClip.Classes.Keyboard
         public static void nonNativeLeaderToControlKeyDown(KeyboardHook.VKeys key)
         {
             GlobalMemory.supressAllKeyDownEvents.Add(key);
+            GlobalMemory.supressOnceKeyUpEvent.Add(key);
             sendKeyUp(key);
             sendKeyDown(KeyboardHook.VKeys.LCONTROL);
         }

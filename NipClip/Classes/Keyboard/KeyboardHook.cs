@@ -311,7 +311,7 @@ namespace NipClip.Classes.Keyboard
                     {
                         pressedKeys.Add(kbdStruct.vkCode);
                         bool status = KeyDown?.Invoke(kbdStruct.vkCode) ?? true;
-                        Console.WriteLine($"Processed KeyDown: {kbdStruct.vkCode}");
+                        Console.WriteLine($"Processed KeyDown: {kbdStruct.vkCode} | Status: {status}");
                         if (!status)
                         {
                             return (IntPtr)1;  // Suppress the key
@@ -322,7 +322,7 @@ namespace NipClip.Classes.Keyboard
                     {
                         pressedKeys.Remove(kbdStruct.vkCode);
                         bool status = KeyUp?.Invoke(kbdStruct.vkCode) ?? true;
-                        Console.WriteLine($"Processed KeyUp: {kbdStruct.vkCode}");
+                        Console.WriteLine($"Processed KeyUp: {kbdStruct.vkCode} | Status: {status}");
                         if (!status)
                         {
                             return (IntPtr)1;  // Suppress the key

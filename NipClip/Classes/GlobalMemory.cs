@@ -10,5 +10,6 @@ namespace NipClip.Classes
     public class GlobalMemory
     {
         public static HashSet<KeyboardHook.VKeys> supressAllKeyDownEvents = new HashSet<KeyboardHook.VKeys>();
+        public static HashSet<KeyboardHook.VKeys> supressOnceKeyUpEvent = new HashSet<KeyboardHook.VKeys>();
     }
 }
