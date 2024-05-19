@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Printing;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,9 +11,7 @@ namespace NipClip.Classes.Keyboard
 {
     public class KeyboardReader
     {
-        private KeyboardHook hook;
-
-        public List<Shortcut> shortcuts = new List<Shortcut>();
+        public KeyboardHook hook;
 
         public List<KeyboardHook.VKeys> buffer = new List<KeyboardHook.VKeys>();
 
@@ -21,6 +20,12 @@ namespace NipClip.Classes.Keyboard
         public bool setNextLeaderKey { get; set; }
         public bool setNextCopyKey { get; set; }
         public bool setNextPasteKey { get; set; }
+
+        public bool nonNativeLeaderKey = false;
+
+        public bool nonNativeCopyKey = false;
+
+        public bool nonNativePasteKey = false;
 
         public KeyboardReader(ref List<MainWindow> mainWindows)
         {
@@ -32,13 +37,28 @@ namespace NipClip.Classes.Keyboard
             this.hook.KeyDown += new KeyboardHook.KeyboardHookCallback(keyboardHook_KeyDown);
             this.hook.KeyUp += new KeyboardHook.KeyboardHookCallback(keyboardHook_KeyUp);
 
-            this.shortcuts.Add(new PasteLastShortcut());
-            this.shortcuts.Add(new CopyShortcut());
+            if (
+                WindowManager.applicationSettings.leaderKey != KeyboardHook.VKeys.CONTROL &&
+                WindowManager.applicationSettings.leaderKey != KeyboardHook.VKeys.LCONTROL &&
+                WindowManager.applicationSettings.leaderKey != KeyboardHook.VKeys.RCONTROL
+                )
+            {
+                this.nonNativeLeaderKey = true;
+            }
+
+            if (WindowManager.applicationSettings.copyKey != KeyboardHook.VKeys.KEY_C)
+            {
+                this.nonNativeCopyKey = true;
+            }
+
+            if (WindowManager.applicationSettings.pasteKey != KeyboardHook.VKeys.KEY_V)
+            {
+                this.nonNativePasteKey = true;
+            }
         }
 
         ~KeyboardReader()
         {
-            this.shortcuts.Clear();
             this.hook.Uninstall();
         }
 
@@ -57,71 +77,134 @@ namespace NipClip.Classes.Keyboard
             this.setNextPasteKey = true;
         }
 
-        private bool checkForShortcut()
-        {
-            foreach (var shortcut in this.shortcuts)
-            {
-                foreach (var keys in shortcut.Keys)
-                {
-                    if (keys.All(item => this.buffer.Contains(item)))
-                    {
-                        foreach (KeyboardHook.VKeys key in this.buffer)
-                        {
-                            Console.WriteLine("[Buffer Key]: " + key.ToString());
-                        }
-
-                        shortcut.mainWindows = this.mainWindows;
-                        this.buffer.Clear();
-                        return shortcut.Callback(keys);
-                    }
-                }
-            }
-            return false;
-        }
-
         private bool keyboardHook_KeyUp(KeyboardHook.VKeys key)
         {
-            if (key == WindowManager.applicationSettings.leaderKey)
+            if (GlobalMemory.supressOnceKeyUpEvent.Contains(key))
             {
-                WindowManager.CloseTransparentWindow();
+                GlobalMemory.supressOnceKeyUpEvent.Remove(key);
+                return false;
             }
 
-            this.buffer.Remove(key);
+            if (key == WindowManager.applicationSettings.leaderKey)
+            {
+                if (this.nonNativeLeaderKey)
+                {
+                    Console.WriteLine("Closing");
+                    KeyboardUtility.nonNativeLeaderToControlKeyUp(key);
+                    WindowManager.CloseTransparentWindow();
+                    this.redirectKeyDownEvent = false;
+                    return false;
+                }
+                WindowManager.CloseTransparentWindow();
+                this.redirectKeyDownEvent = false;
+                return true;
+            }
+
+            if (key == WindowManager.applicationSettings.copyKey && this.nonNativeCopyKey)
+            {
+                KeyboardUtility.nonNativeCopyToCKeyUp(key);
+            }
+
+            if (key == WindowManager.applicationSettings.pasteKey && this.nonNativePasteKey)
+            {
+                KeyboardUtility.nonNativePasteToVKeyUp(key);
+            }
+
             //Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] KeyUp Event {" + key.ToString() + "}");
             return true;
         }
+
+        private bool redirectKeyDownEvent = false;
+
         private bool keyboardHook_KeyDown(KeyboardHook.VKeys key)
         {
             if (this.setNextLeaderKey)
             {
                 WindowManager.ChangeKeyboardLeader(key);
                 this.setNextLeaderKey = false;
+                return false;
             }
             if (this.setNextCopyKey)
             {
                 WindowManager.ChangeCopyKey(key);
                 this.setNextCopyKey = false;
+                return false;
             }
             if (this.setNextPasteKey)
             {
                 WindowManager.ChangePasteKey(key); 
                 this.setNextPasteKey = false;
+                return false;
+            }
+
+            if (GlobalMemory.supressAllKeyDownEvents.Contains(key))
+            {
+                //Console.WriteLine("Down: ");
+                //foreach (KeyboardHook.VKeys keyy in GlobalMemory.supressAllKeyDownEvents)
+                //{
+                //    Console.WriteLine(keyy);
+                //}
+                if (this.nonNativeLeaderKey && key == WindowManager.applicationSettings.leaderKey)
+                {
+                    GlobalMemory.supressOnceKeyUpEvent.Add(key);
+                    KeyboardUtility.sendKeyUp(key);
+                }
+                return false;
             }
 
             if (key == WindowManager.applicationSettings.leaderKey)
             {
-                WindowManager.OpenTransparentWindow();
-            }
-
-            if (!this.buffer.Contains(key)) 
-            {
-                this.buffer.Add(key);
-                if (this.checkForShortcut())
+                if (this.nonNativeLeaderKey)
                 {
+                    KeyboardUtility.nonNativeLeaderToControlKeyDown(key);
+                    WindowManager.OpenTransparentWindow();
                     return false;
                 }
+
+                WindowManager.OpenTransparentWindow();
+                return true;
             }
-            //Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] KeyDown Event {" + key.ToString() + "}");
+
+            if (WindowManager.transparentWindow != null)
+            {
+                if (WindowManager.transparentWindow.active == true && WindowManager.transparentWindow.activeAction == string.Empty && key == WindowManager.applicationSettings.copyKey)
+                {
+                    if (this.nonNativeCopyKey)
+                    {
+                        KeyboardUtility.nonNativeCopyToCKeyDown(key);
+                        WindowManager.transparentWindow.StartCopyAction();
+                        this.redirectKeyDownEvent = true;
+                        return false;
+                    }
+
+                    WindowManager.transparentWindow.StartCopyAction();
+                    this.redirectKeyDownEvent = true;
+                    return true;
+                }
+
+                if (WindowManager.transparentWindow.active == true && WindowManager.transparentWindow.activeAction == string.Empty && key == WindowManager.applicationSettings.pasteKey)
+                {
+                    if (this.nonNativePasteKey)
+                    {
+                        KeyboardUtility.nonNativePasteToVKeyDown(key);
+                        WindowManager.transparentWindow.StartPasteAction();
+                        this.redirectKeyDownEvent = true;
+                        return false;
+                    }
+                    WindowManager.transparentWindow.StartPasteAction();
+                    this.redirectKeyDownEvent = true;
+                    return true;
+                }
+
+                return true;
+            }
+
+            if (this.redirectKeyDownEvent)
+            {
+                return WindowManager.transparentWindow.keyboardHook_KeyDown(key);
+            }
+
+            //Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] KeyUp Event {" + key.ToString() + "}");
             return true;
         }
     }
