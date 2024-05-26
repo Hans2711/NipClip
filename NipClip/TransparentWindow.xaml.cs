@@ -31,7 +31,11 @@ namespace NipClip
 
         public List<int> activeClipboardIDs = new List<int>();
 
+        public int activeClipboardID = -1;
+
         public bool freshCopy = false;
+
+        private CancellationTokenSource cancellationTokenSource;
 
         public TransparentWindow(ref List<MainWindow> mainWindows)
         {
@@ -57,12 +61,52 @@ namespace NipClip
 
         public void Refresh()
         {
-           this.activeClipboardIDs.Clear();
+            this.activeClipboardIDs.Clear();
             this.RefreshClipboards();
             this.SetActiveClipboardID(0);
 
             this.label.Content = "Copy: [" + WindowManager.applicationSettings.copyKey.ToString() + "]" + Environment.NewLine +
                 "Paste: [" + WindowManager.applicationSettings.pasteKey.ToString() + "]";
+
+            cancellationTokenSource = new CancellationTokenSource();
+            var token = cancellationTokenSource.Token;
+            Task.Run(() => TabControlWorker(token), token);
+        }
+
+        public void TabControlWorker(CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                foreach (var window in mainWindows)
+                {
+                    if (window.clipboardID != this.activeClipboardID)
+                    {
+                        continue;
+                    }
+
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        foreach (TabItem item in clipboards.Items)
+                        {
+                            if (item.Header.ToString() == window.clipboardID.ToString())
+                            {
+                                clipboards.SelectedValue = item;
+                                if (this.activeAction == "copy")
+                                {
+                                    Label label = item.Content as Label;
+
+                                    if (label.Content != mainWindows[0].clipboardReader.clipboardStorage.entries.First().Content)
+                                    {
+                                        label.Content = mainWindows[0].clipboardReader.clipboardStorage.entries.First().Content;
+
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                Thread.Sleep(100);
+            }
         }
 
         public void Close()
@@ -79,17 +123,13 @@ namespace NipClip
                             continue;
                         }
 
-                        Console.WriteLine("Doing Shit");
                         if (this.activeClipboardIDs.Contains(window.clipboardID))
                         {
-                            Console.WriteLine("koing Shit");
                             window.clipboardReader.clipboardStorage.entries.Insert(0, entry);
                         }
                     }
-                    Console.WriteLine("Chcking Fresh Copy");
                     if (!this.freshCopy)
                     {
-                        Console.WriteLine("Not Fresh Copy");
                         mainWindows[0].clipboardReader.clipboardStorage.entries.Remove(entry);
                         mainWindows[0].clipboardReader.clipboardStorage.entries.First().pasteToClipboard();
                     }
@@ -97,6 +137,7 @@ namespace NipClip
                 }
             }
 
+            cancellationTokenSource.Cancel();
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
@@ -145,34 +186,51 @@ namespace NipClip
         public void SetActiveClipboardID(int activeClipboardID)
         {
             this.activeClipboardIDs.Add(activeClipboardID);
+            this.activeClipboardID = activeClipboardID;
+        }
+
+        public void SetNextActiveClipboardID()
+        {
+            bool foundCurrent = false;
 
             foreach (var window in mainWindows)
             {
-                if (window.clipboardID != activeClipboardID)
+                if (foundCurrent)
                 {
-                    continue;
+                    this.SetActiveClipboardID(window.clipboardID);
+                    return;
                 }
 
-                foreach (TabItem item in clipboards.Items)
+                if (window.clipboardID == activeClipboardID)
                 {
-                    if (item.Header.ToString() == window.clipboardID.ToString())
-                    {
-                        clipboards.SelectedValue = item;
-                        if (this.activeAction == "copy")
-                        {
-
-                        }
-                    }
+                    foundCurrent = true;
                 }
             }
-
-
         }
+        public void SetPreviousActiveClipboardID()
+        {
+            bool foundCurrent = false;
 
+            for (int i = mainWindows.Count - 1; i >= 0; i--)
+            {
+                var window = mainWindows[i];
+
+                if (foundCurrent)
+                {
+                    this.SetActiveClipboardID(window.clipboardID);
+                    return;
+                }
+
+                if (window.clipboardID == activeClipboardID)
+                {
+                    foundCurrent = true;
+                }
+            }
+        }
         public bool keyboardHook_KeyDown(KeyboardHook.VKeys key)
         {
             if (
-                key == KeyboardHook.VKeys.KEY_1 || 
+                key == KeyboardHook.VKeys.KEY_1 ||
                 key == KeyboardHook.VKeys.KEY_2 ||
                 key == KeyboardHook.VKeys.KEY_3 ||
                 key == KeyboardHook.VKeys.KEY_4 ||
@@ -220,7 +278,25 @@ namespace NipClip
                 {
                     clipboardIndex = 9;
                 }
-                this.SetActiveClipboardID( clipboardIndex );
+                this.SetActiveClipboardID(clipboardIndex);
+                this.freshCopy = false;
+            }
+
+            if (
+                key == KeyboardHook.VKeys.LEFT ||
+                key == KeyboardHook.VKeys.RIGHT
+                )
+            {
+                if (key == KeyboardHook.VKeys.LEFT)
+                {
+                    this.SetPreviousActiveClipboardID();
+                }
+
+                if (key == KeyboardHook.VKeys.RIGHT)
+                {
+                    this.SetNextActiveClipboardID();
+                }
+
                 this.freshCopy = false;
             }
 
@@ -232,29 +308,16 @@ namespace NipClip
             return false;
         }
 
-        private void WaitandRefresh()
-        {
-            Thread.Sleep(500);
-            this.Dispatcher.Invoke(() => { 
-                this.RefreshClipboards();
-            });
-        }
-
-
         public void StartCopyAction()
         {
             this.activeAction = "copy";
             this.label.Content = "[Copy Operation]";
             this.freshCopy = true;
-
-            Thread wait = new Thread(this.WaitandRefresh);
-            wait.Start();
         }
 
         public void StartPasteAction()
         {
             this.activeAction = "paste";
-            this.label.Content = "paste";
             this.label.Content = "[Paste Operation]";
         }
     }

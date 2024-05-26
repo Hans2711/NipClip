@@ -1,8 +1,8 @@
 ﻿
-TransparentWindow Copy To Non Native Clipboard (fix)
+TransparentWindow Copy (Completed)
 TransparentWindow Paste
 Extract...
-TransparentWindow Arrow Key Navigation
+TransparentWindow Arrow Key Navigation (Completed for Copy Operation)
 NipLang Template Shortcut and Navigation
 
 
