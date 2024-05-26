@@ -1,4 +1,47 @@
-﻿- Clipboard Multiplexer
+﻿
+TransparentWindow Copy To Non Native Clipboard (fix)
+TransparentWindow Paste
+Extract...
+TransparentWindow Arrow Key Navigation
+NipLang Template Shortcut and Navigation
+
+
+Search Utility
+Weitere Filter.
+- HTML
+- JSON
+- E-Mail
+- Telefon
+- Passwort (Wäre geil aber stell ich mir ertwas schwieriger vor)
+- ...
+
+
+
+UX
+ListBox Copy Selected Items
+On Startup dont Show() mainWindows
+
+
+
+UI 
+Logo
+Overall Button Tab List Views
+Multilanguage Completion
+
+
+
+
+Zukunft:
+Image Support
+Windows Virtual Desktop by Index
+
+
+
+
+----- OLD ------
+
+
+- Clipboard Multiplexer
 - (done)
 
 - Keyboard Hook (Shortcuts)

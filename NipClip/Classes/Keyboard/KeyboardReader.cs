@@ -152,6 +152,11 @@ namespace NipClip.Classes.Keyboard
                 return false;
             }
 
+            if (this.redirectKeyDownEvent)
+            {
+                return WindowManager.transparentWindow.keyboardHook_KeyDown(key);
+            }
+
             if (key == WindowManager.applicationSettings.leaderKey)
             {
                 if (this.nonNativeLeaderKey)
@@ -199,10 +204,6 @@ namespace NipClip.Classes.Keyboard
                 return true;
             }
 
-            if (this.redirectKeyDownEvent)
-            {
-                return WindowManager.transparentWindow.keyboardHook_KeyDown(key);
-            }
 
             //Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] KeyUp Event {" + key.ToString() + "}");
             return true;

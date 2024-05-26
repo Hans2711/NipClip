@@ -223,13 +223,13 @@ namespace NipClip
                         this.changeCurrentLeaderButton.Content = Properties.Resources.change;
                     }
 
-                    if ((KeyboardHook.VKeys)this.copyKeySelection.SelectedItem != WindowManager.applicationSettings.copyKey)
+                    if (this.copyKeySelection != null && (KeyboardHook.VKeys)this.copyKeySelection.SelectedItem != WindowManager.applicationSettings.copyKey)
                     {
                         this.copyKeySelection.SelectedItem = WindowManager.applicationSettings.copyKey;
                         this.changeCopyButton.Content = Properties.Resources.change;
                     }
 
-                    if ((KeyboardHook.VKeys)this.pasteKeySelection.SelectedItem != WindowManager.applicationSettings.pasteKey)
+                    if (this.pasteKeySelection != null && (KeyboardHook.VKeys)this.pasteKeySelection.SelectedItem != WindowManager.applicationSettings.pasteKey)
                     {
                         this.pasteKeySelection.SelectedItem = WindowManager.applicationSettings.pasteKey;
                         this.changepasteButton.Content = Properties.Resources.change;
