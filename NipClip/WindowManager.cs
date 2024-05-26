@@ -228,16 +228,19 @@ namespace NipClip
         public static TransparentWindow transparentWindow { get; set; }
         public static void OpenTransparentWindow()
         {
+            clipboardMainWindows = clipboardMainWindows.OrderBy(entry => entry.clipboardID).ToList();
             if (transparentWindow == null)
             {
                 transparentWindow = new TransparentWindow(ref clipboardMainWindows);
                 transparentWindow.Show();
                 transparentWindow.active = true;
+                transparentWindow.Refresh();
             }
             else
             {
                 transparentWindow.Show();
                 transparentWindow.active = true;
+                transparentWindow.Refresh();
             }
         }
 
@@ -245,6 +248,7 @@ namespace NipClip
         {
             if (transparentWindow != null)
             {
+                transparentWindow.Close();
                 transparentWindow.Hide();
                 transparentWindow.Reset();
                 transparentWindow.active = false;
