@@ -7,6 +7,7 @@ NipLang Template Shortcut and Navigation
 
 
 Search Utility
+- Two Slider item Slider for recoreded Date range Filter
 Weitere Filter.
 - HTML
 - JSON
