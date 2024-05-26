@@ -74,13 +74,22 @@ namespace NipClip
                     ClipboardEntry entry = mainWindows[0].clipboardReader.clipboardStorage.entries.First();
                     foreach (var window in mainWindows)
                     {
+                        if (window.clipboardID == 0)
+                        {
+                            continue;
+                        }
+
+                        Console.WriteLine("Doing Shit");
                         if (this.activeClipboardIDs.Contains(window.clipboardID))
                         {
+                            Console.WriteLine("koing Shit");
                             window.clipboardReader.clipboardStorage.entries.Insert(0, entry);
                         }
                     }
-                    if (this.freshCopy)
+                    Console.WriteLine("Chcking Fresh Copy");
+                    if (!this.freshCopy)
                     {
+                        Console.WriteLine("Not Fresh Copy");
                         mainWindows[0].clipboardReader.clipboardStorage.entries.Remove(entry);
                         mainWindows[0].clipboardReader.clipboardStorage.entries.First().pasteToClipboard();
                     }
@@ -212,6 +221,7 @@ namespace NipClip
                     clipboardIndex = 9;
                 }
                 this.SetActiveClipboardID( clipboardIndex );
+                this.freshCopy = false;
             }
 
             if (key == WindowManager.applicationSettings.copyKey)
