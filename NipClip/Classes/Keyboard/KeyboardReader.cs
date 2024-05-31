@@ -79,6 +79,12 @@ namespace NipClip.Classes.Keyboard
 
         private bool keyboardHook_KeyUp(KeyboardHook.VKeys key)
         {
+            if (GlobalMemory.ignoreOnceKeyUpEvent.Contains(key))
+            {
+                GlobalMemory.ignoreOnceKeyUpEvent.Remove(key);
+                return true;
+            }
+
             if (GlobalMemory.supressOnceKeyUpEvent.Contains(key))
             {
                 GlobalMemory.supressOnceKeyUpEvent.Remove(key);
@@ -134,6 +140,18 @@ namespace NipClip.Classes.Keyboard
             {
                 WindowManager.ChangePasteKey(key); 
                 this.setNextPasteKey = false;
+                return false;
+            }
+
+            if (GlobalMemory.ignoreOnceKeyDownEvent.Contains(key))
+            {
+                GlobalMemory.ignoreOnceKeyDownEvent.Remove(key);
+                return true;
+            }
+
+            if (GlobalMemory.supressOnceKeyDownEvent.Contains(key))
+            {
+                GlobalMemory.supressOnceKeyDownEvent.Remove(key);
                 return false;
             }
 
@@ -196,9 +214,10 @@ namespace NipClip.Classes.Keyboard
                         this.redirectKeyDownEvent = true;
                         return false;
                     }
+
                     WindowManager.transparentWindow.StartPasteAction();
                     this.redirectKeyDownEvent = true;
-                    return true;
+                    return false;
                 }
 
                 return true;

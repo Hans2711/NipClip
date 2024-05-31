@@ -1,4 +1,5 @@
-﻿using NipClip.Classes.Clipboard;
+﻿using NipClip.Classes;
+using NipClip.Classes.Clipboard;
 using NipClip.Classes.Keyboard;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -34,6 +36,8 @@ namespace NipClip
         public int activeClipboardID = -1;
 
         public bool freshCopy = false;
+
+        public bool freshPaste = false;
 
         private CancellationTokenSource cancellationTokenSource;
 
@@ -111,9 +115,9 @@ namespace NipClip
 
         public void Close()
         {
-            if (this.activeAction == "copy")
+            if (this.activeClipboardIDs.Count > 0)
             {
-                if (this.activeClipboardIDs.Count > 0)
+                if (this.activeAction == "copy")
                 {
                     ClipboardEntry entry = mainWindows[0].clipboardReader.clipboardStorage.entries.First();
                     foreach (var window in mainWindows)
@@ -134,6 +138,49 @@ namespace NipClip
                         mainWindows[0].clipboardReader.clipboardStorage.entries.First().pasteToClipboard();
                     }
                     WindowManager.RefreshAll();
+                }
+
+                if (this.activeAction == "paste")
+                {
+                    ClipboardEntry entry = mainWindows[0].clipboardReader.clipboardStorage.entries.First();
+                    ClipboardEntry customPasteEntry = null;
+
+                    foreach (var window in mainWindows)
+                    {
+                        if (window.clipboardID == 0)
+                        {
+                            continue;
+                        }
+
+                        if (this.activeClipboardID == window.clipboardID)
+                        {
+                            customPasteEntry = window.clipboardReader.clipboardStorage.entries.First();
+                            break;
+                        }
+                    }
+                    Console.WriteLine("Closing.........");
+
+                    if (customPasteEntry != null)
+                    {
+                        ClipboardStorage.ignoreElement = customPasteEntry;
+                        StringClipboardEntry stringElement = customPasteEntry as StringClipboardEntry;
+                        GlobalMemory.ignoreOnceKeyUpEvent.Add(KeyboardHook.VKeys.CONTROL);
+                        KeyboardUtility.sendKeyUp(KeyboardHook.VKeys.CONTROL);
+                        stringElement.SendKeys();
+                        //stringElement.pasteToClipboard();
+                    }
+                    else
+                    {
+                        GlobalMemory.supressOnceKeyDownEvent.Add(KeyboardHook.VKeys.KEY_V);
+                        GlobalMemory.supressOnceKeyDownEvent.Add(KeyboardHook.VKeys.CONTROL);
+                        KeyboardUtility.sendKeyDown(KeyboardHook.VKeys.KEY_V);
+                        KeyboardUtility.sendKeyDown(KeyboardHook.VKeys.CONTROL);
+
+                        GlobalMemory.supressOnceKeyUpEvent.Add(KeyboardHook.VKeys.KEY_V);
+                        GlobalMemory.supressOnceKeyUpEvent.Add(KeyboardHook.VKeys.CONTROL);
+                        KeyboardUtility.sendKeyUp(KeyboardHook.VKeys.KEY_V);
+                        KeyboardUtility.sendKeyUp(KeyboardHook.VKeys.CONTROL);
+                    }
                 }
             }
 
@@ -168,17 +215,20 @@ namespace NipClip
                 }
                 if (!updated)
                 {
-                    TabItem tabItem0 = new TabItem();
-                    tabItem0.Header = window.clipboardID;
+                    if (window.clipboardReader.clipboardStorage.entries != null)
+                    {
+                        TabItem tabItem0 = new TabItem();
+                        tabItem0.Header = window.clipboardID;
 
-                    Label label0 = new Label();
-                    label0.Content = window.clipboardReader.clipboardStorage.entries.First().Content;
-                    label0.HorizontalAlignment = HorizontalAlignment.Center;
-                    label0.VerticalAlignment = VerticalAlignment.Center;
+                        Label label0 = new Label();
+                        label0.Content = window.clipboardReader.clipboardStorage.entries.First().Content;
+                        label0.HorizontalAlignment = HorizontalAlignment.Center;
+                        label0.VerticalAlignment = VerticalAlignment.Center;
 
-                    tabItem0.Content = label0;
+                        tabItem0.Content = label0;
 
-                    clipboards.Items.Add(tabItem0);
+                        clipboards.Items.Add(tabItem0);
+                    }
                 }
             }
         }
@@ -280,6 +330,7 @@ namespace NipClip
                 }
                 this.SetActiveClipboardID(clipboardIndex);
                 this.freshCopy = false;
+                this.freshPaste = false;
             }
 
             if (
@@ -298,11 +349,12 @@ namespace NipClip
                 }
 
                 this.freshCopy = false;
+                this.freshPaste = false;
             }
 
             if (key == WindowManager.applicationSettings.copyKey)
             {
-                this.Close();
+                //this.Close();
             }
 
             return false;
@@ -313,12 +365,15 @@ namespace NipClip
             this.activeAction = "copy";
             this.label.Content = "[Copy Operation]";
             this.freshCopy = true;
+            this.SetActiveClipboardID(0);
         }
 
         public void StartPasteAction()
         {
             this.activeAction = "paste";
             this.label.Content = "[Paste Operation]";
+            this.freshPaste = true;
+            this.SetActiveClipboardID(0);
         }
     }
 }

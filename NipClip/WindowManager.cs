@@ -246,13 +246,16 @@ namespace NipClip
 
         public static void CloseTransparentWindow()
         {
-            if (transparentWindow != null)
+            if (transparentWindow != null || transparentWindow.Visibility == Visibility.Hidden)
             {
                 transparentWindow.Close();
                 transparentWindow.Hide();
                 transparentWindow.Reset();
                 transparentWindow.active = false;
                 transparentWindow.activeAction = string.Empty;
+
+                GlobalMemory.supressOnceKeyDownEvent.Clear();
+                GlobalMemory.supressOnceKeyUpEvent.Clear();
             }
         }
 

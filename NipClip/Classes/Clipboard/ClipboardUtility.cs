@@ -50,6 +50,7 @@ namespace NipClip.Classes.Clipboard
 
         public static void PasteTextAndRemoveDefaultText(int prefLength, ClipboardEntry entry)
         {
+            GlobalMemory.supressOnceKeyUpEvent.Add(Keyboard.KeyboardHook.VKeys.CONTROL);
             keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
 
             for (int i = 0; i < prefLength; i++)
@@ -59,7 +60,11 @@ namespace NipClip.Classes.Clipboard
             }
 
             ClipboardStorage.ignoreElement = entry;
-            entry.pasteToClipboard();
+
+            GlobalMemory.supressOnceKeyDownEvent.Add(Keyboard.KeyboardHook.VKeys.CONTROL);
+            GlobalMemory.supressOnceKeyUpEvent.Add(Keyboard.KeyboardHook.VKeys.CONTROL);
+            GlobalMemory.supressOnceKeyDownEvent.Add(Keyboard.KeyboardHook.VKeys.KEY_V);
+            GlobalMemory.supressOnceKeyUpEvent.Add(Keyboard.KeyboardHook.VKeys.KEY_V);
 
             keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYDOWN, 0);
             keybd_event(VK_V, 0, KEYEVENTF_KEYDOWN, 0);

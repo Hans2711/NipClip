@@ -11,5 +11,8 @@ namespace NipClip.Classes
     {
         public static HashSet<KeyboardHook.VKeys> supressAllKeyDownEvents = new HashSet<KeyboardHook.VKeys>();
         public static HashSet<KeyboardHook.VKeys> supressOnceKeyUpEvent = new HashSet<KeyboardHook.VKeys>();
+        public static HashSet<KeyboardHook.VKeys> ignoreOnceKeyUpEvent = new HashSet<KeyboardHook.VKeys>();
+        public static HashSet<KeyboardHook.VKeys> ignoreOnceKeyDownEvent = new HashSet<KeyboardHook.VKeys>();
+        public static HashSet<KeyboardHook.VKeys> supressOnceKeyDownEvent = new HashSet<KeyboardHook.VKeys>();
     }
 }

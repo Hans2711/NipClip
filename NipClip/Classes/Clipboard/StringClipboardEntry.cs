@@ -1,8 +1,11 @@
-﻿using System;
+﻿using NipClip.Classes.Keyboard;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
@@ -58,9 +61,45 @@ namespace NipClip.Classes.Clipboard
 
         public override void pasteToClipboard()
         {
-            if (!string.IsNullOrEmpty((string)this.Content))
-            { 
-                System.Windows.Clipboard.SetText((string)this.Content);
+        }
+
+        public void SendKeys()
+        {
+            string contentString = this.Content as string;
+            if (string.IsNullOrEmpty(contentString)) return;
+
+            foreach (char c in contentString)
+            {
+                KeyboardHook.VKeys key = CharToVKey(c);
+
+                GlobalMemory.ignoreOnceKeyUpEvent.Add(key);
+                GlobalMemory.ignoreOnceKeyDownEvent.Add(key);
+
+                KeyboardUtility.sendKeyDown(key);
+                Thread.Sleep(10);  // Small delay to simulate typing
+                KeyboardUtility.sendKeyUp(key);
+                Thread.Sleep(10);  // Small delay to simulate typing
+            }
+        }
+
+        private KeyboardHook.VKeys CharToVKey(char c)
+        {
+            // Convert character to corresponding VKey
+            if (char.IsLetter(c))
+            {
+                return (KeyboardHook.VKeys)Enum.Parse(typeof(KeyboardHook.VKeys), "KEY_" + char.ToUpper(c));
+            }
+            if (char.IsDigit(c))
+            {
+                return (KeyboardHook.VKeys)Enum.Parse(typeof(KeyboardHook.VKeys), "KEY_" + c);
+            }
+            switch (c)
+            {
+                case ' ': return KeyboardHook.VKeys.SPACE;
+                case '\n': return KeyboardHook.VKeys.RETURN;
+                case '\t': return KeyboardHook.VKeys.TAB;
+                // Add other special character mappings here
+                default: return KeyboardHook.VKeys.NONE;
             }
         }
 

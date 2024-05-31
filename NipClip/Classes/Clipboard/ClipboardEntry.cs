@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Animation;
 using System.Xml.Serialization;
@@ -119,9 +121,50 @@ namespace NipClip.Classes.Clipboard
 
         public virtual void pasteToClipboard()
         {
-            System.Windows.Clipboard.SetDataObject(this.Content);
-        }
+            const int maxRetries = 3;
+            int attempts = 0;
+            bool success = false;
 
+            while (attempts < maxRetries && !success)
+            {
+                try
+                {
+                    // Clipboard operations must be performed in STA mode
+                    Thread thread = new Thread(() =>
+                    {
+                        try
+                        {
+                            System.Windows.Clipboard.SetDataObject(this.Content);
+                            success = true;
+                        }
+                        catch (COMException ex)
+                        {
+                            // Log or handle the specific COM exception
+                            Console.WriteLine($"Clipboard operation failed: {ex.Message}");
+                        }
+                        catch (Exception ex)
+                        {
+                            // Log or handle any other exceptions
+                            Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+                        }
+                    });
+                    thread.SetApartmentState(ApartmentState.STA);
+                    thread.Start();
+                    thread.Join();
+                }
+                catch (Exception ex)
+                {
+                    attempts++;
+                    Console.WriteLine($"Attempt {attempts} failed: {ex.Message}");
+                    Thread.Sleep(100); // Wait for 100 ms before retrying
+                }
+            }
+
+            if (!success)
+            {
+                Console.WriteLine("Failed to set clipboard content after multiple attempts.");
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
